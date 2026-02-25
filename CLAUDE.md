@@ -318,33 +318,64 @@ npx skills add https://github.com/vercel-labs/skills --skill find-skills
 
 ## Project Structure
 
+This is a **Turborepo monorepo** with pnpm workspaces.
+
 ```
-├── app/                    # Next.js App Router
-│   ├── api/               # API routes
-│   ├── (auth)/            # Auth-related pages
-│   └── (dashboard)/       # Protected pages
-├── components/            # React components
-├── lib/                   # Utility functions
-│   ├── supabase/         # Supabase client config
-│   └── utils/            # General utilities
-├── public/               # Static assets
-├── supabase/             # Supabase config
-│   └── migrations/       # Database migrations
-├── .env.local            # Environment variables (not committed)
-├── CLAUDE.md             # This file
-└── vercel.json           # Vercel configuration
+sieve-fullstack/
+├── apps/
+│   ├── web/                          # Next.js compliance engine + dashboard
+│   ├── mcp-ingredients/              # Ingredients MCP server (shared)
+│   └── mcp-sg/                       # Singapore jurisdiction MCP server
+├── packages/
+│   ├── db/                           # Supabase client + generated types
+│   ├── shared/                       # Shared types + utilities
+│   └── tsconfig/                     # Shared TS configs
+├── supabase/
+│   └── migrations/                   # Database migrations
+├── docs/                             # PRD and docs
+├── tasks/                            # Task tracking
+│   ├── todo.md
+│   └── lessons.md
+├── turbo.json
+├── pnpm-workspace.yaml
+└── CLAUDE.md
 ```
+
+### Package Dependency Graph
+
+```
+apps/web              → @sieve/db, @sieve/shared
+apps/mcp-ingredients  → @sieve/db, @sieve/shared
+apps/mcp-sg           → @sieve/db, @sieve/shared
+packages/db           → @supabase/supabase-js
+packages/shared       → (pure types + utilities)
+```
+
+### Monorepo Conventions
+
+- All apps are Next.js 15 (App Router) deployed independently on Vercel
+- Shared types go in `packages/shared/src/types/`
+- Database client in `packages/db/` — always use `createServiceClient()` for server-side operations
+- Each app has its own `vercel.json` for independent deployment
+- Use `@/*` path alias within each app (resolves to app root)
 
 ---
 
 ## Environment Variables
 
-Required variables (to be set in Vercel/local `.env.local`):
+Required variables (see `.env.example`):
 
 ```
+# Supabase (auto-provisioned by Vercel Marketplace)
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
+
+# Manual setup
+ANTHROPIC_API_KEY=
+EXA_API_KEY=
+MCP_SERVER_SECRET=
+CRON_SECRET=
 ```
 
 ### Vercel Environment Variable Gotcha
@@ -365,10 +396,12 @@ If an API key or secret is failing only in production (but works locally), a tra
 
 | Task | Command |
 |------|---------|
-| Start dev server | `npm run dev` |
-| Run tests | `npm test` |
-| Build for production | `npm run build` |
-| Deploy | `vercel` |
-| Generate Supabase types | `npx supabase gen types typescript` |
-| Create migration | `npx supabase migration new <name>` |
-| Push migration | `npx supabase db push` |
+| Install dependencies | `pnpm install` |
+| Start all dev servers | `pnpm dev` |
+| Start specific app | `pnpm dev --filter=web` |
+| Build all | `pnpm build` |
+| Build specific app | `pnpm build --filter=mcp-sg` |
+| Type-check all | `pnpm type-check` |
+| Lint all | `pnpm lint` |
+| Generate Supabase types | `pnpm supabase gen types typescript` |
+| Create migration | `pnpm supabase migration new <name>` |

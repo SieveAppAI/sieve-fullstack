@@ -1,0 +1,16 @@
+{
+  "name": "sieve-fullstack",
+  "private": true,
+  "packageManager": "pnpm@10.10.0",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "clean": "turbo clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0",
+    "typescript": "^5.8.3"
+  }
+}
