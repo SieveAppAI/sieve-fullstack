@@ -1,4 +1,5 @@
 import { createServiceClient } from '@sieve/db';
+import type { Json } from '@sieve/db';
 import type { RegulatoryPage, StructuredData } from '@sieve/shared';
 
 const JURISDICTION = 'SG';
@@ -40,7 +41,7 @@ export async function storeStructuredData(
   await supabase
     .from('regulatory_sources')
     .update({
-      structured_data: structuredData as unknown as Record<string, unknown>,
+      structured_data: structuredData as unknown as Json,
       scrape_status: 'structured',
       updated_at: new Date().toISOString(),
     })
@@ -116,6 +117,7 @@ async function storeIngredientRegulations(
           canonical_name: entry.ingredient_name as string,
           inci_name: (entry.inci_name as string) ?? null,
           cas_number: (entry.cas_number as string) ?? null,
+          category: (entry.category as string) ?? null,
           updated_at: new Date().toISOString(),
         },
         { onConflict: 'canonical_name' }
@@ -137,7 +139,7 @@ async function storeIngredientRegulations(
         conditions: {
           conditions_of_use: entry.conditions ?? [],
           other_limitations: entry.other_limitations ?? [],
-        },
+        } as unknown as Json,
         required_warnings: (entry.required_warnings as string[]) ?? [],
         regulation_reference: (entry.regulation_reference as string) ?? null,
         annex_reference: (entry.annex_reference as string) ?? null,
@@ -145,8 +147,7 @@ async function storeIngredientRegulations(
         updated_at: new Date().toISOString(),
       },
       {
-        onConflict:
-          'ingredient_id,jurisdiction,regulatory_body,product_categories',
+        onConflict: 'ingredient_id,jurisdiction,regulatory_body',
       }
     );
   }
@@ -159,17 +160,20 @@ async function storeLabellingRequirements(
   const supabase = createServiceClient();
 
   for (const entry of entries) {
-    await supabase.from('labelling_requirements').insert({
-      jurisdiction: JURISDICTION,
-      regulatory_body: (entry.regulatory_body as string) ?? 'SFA',
-      product_category: ((entry.product_categories as string[]) ?? ['food'])[0],
-      element: entry.element as string,
-      mandatory: (entry.mandatory as boolean) ?? true,
-      description: (entry.description as string) ?? null,
-      format_rules: entry.format_rules as Record<string, unknown> | null,
-      regulation_reference: (entry.regulation_reference as string) ?? null,
-      source_id: sourceId,
-    });
+    await supabase.from('labelling_requirements').upsert(
+      {
+        jurisdiction: JURISDICTION,
+        regulatory_body: (entry.regulatory_body as string) ?? 'SFA',
+        product_category: ((entry.product_categories as string[]) ?? ['food'])[0],
+        element: entry.element as string,
+        mandatory: (entry.mandatory as boolean) ?? true,
+        description: (entry.description as string) ?? null,
+        format_rules: (entry.format_rules as Json) ?? null,
+        regulation_reference: (entry.regulation_reference as string) ?? null,
+        source_id: sourceId,
+      },
+      { onConflict: 'jurisdiction,product_category,element' }
+    );
   }
 }
 
@@ -180,17 +184,20 @@ async function storeClaimsRules(
   const supabase = createServiceClient();
 
   for (const entry of entries) {
-    await supabase.from('claims_rules').insert({
-      jurisdiction: JURISDICTION,
-      regulatory_body: (entry.regulatory_body as string) ?? 'SFA',
-      claim_text: entry.claim_text as string,
-      claim_type: entry.claim_type as string,
-      status: entry.status as string,
-      product_categories: (entry.product_categories as string[]) ?? [],
-      conditions: entry.conditions as Record<string, unknown> | null,
-      regulation_reference: (entry.regulation_reference as string) ?? null,
-      source_id: sourceId,
-    });
+    await supabase.from('claims_rules').upsert(
+      {
+        jurisdiction: JURISDICTION,
+        regulatory_body: (entry.regulatory_body as string) ?? 'SFA',
+        claim_text: entry.claim_text as string,
+        claim_type: entry.claim_type as string,
+        status: entry.status as string,
+        product_categories: (entry.product_categories as string[]) ?? [],
+        conditions: (entry.conditions as Json) ?? null,
+        regulation_reference: (entry.regulation_reference as string) ?? null,
+        source_id: sourceId,
+      },
+      { onConflict: 'jurisdiction,claim_text,claim_type' }
+    );
   }
 }
 
@@ -201,15 +208,18 @@ async function storeImportRequirements(
   const supabase = createServiceClient();
 
   for (const entry of entries) {
-    await supabase.from('import_requirements').insert({
-      jurisdiction: JURISDICTION,
-      product_category: ((entry.product_categories as string[]) ?? ['food'])[0],
-      requirement: entry.requirement as string,
-      requirement_type: (entry.requirement_type as string) ?? null,
-      regulatory_body: (entry.licensing_body as string) ?? 'SFA',
-      documents_required: (entry.documents_required as string[]) ?? [],
-      regulation_reference: (entry.regulation_reference as string) ?? null,
-      source_id: sourceId,
-    });
+    await supabase.from('import_requirements').upsert(
+      {
+        jurisdiction: JURISDICTION,
+        product_category: ((entry.product_categories as string[]) ?? ['food'])[0],
+        requirement: entry.requirement as string,
+        requirement_type: (entry.requirement_type as string) ?? null,
+        regulatory_body: (entry.licensing_body as string) ?? 'SFA',
+        documents_required: (entry.documents_required as string[]) ?? [],
+        regulation_reference: (entry.regulation_reference as string) ?? null,
+        source_id: sourceId,
+      },
+      { onConflict: 'jurisdiction,product_category,requirement' }
+    );
   }
 }

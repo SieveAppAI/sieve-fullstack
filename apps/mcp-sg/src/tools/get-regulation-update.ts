@@ -8,9 +8,8 @@ export function registerGetRegulationUpdate(server: McpServer) {
     'Get recent regulatory changes detected in Singapore',
     {
       since: z.string().optional().describe('ISO date to get changes since'),
-      category: z.string().optional().describe('Filter by category'),
     },
-    async ({ since, category }) => {
+    async ({ since }) => {
       const supabase = createServiceClient();
 
       let query = supabase

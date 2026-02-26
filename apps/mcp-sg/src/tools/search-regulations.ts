@@ -26,7 +26,7 @@ export function registerSearchRegulations(server: McpServer) {
           .from('regulatory_sources')
           .select('url, title, content_text, regulatory_body')
           .eq('jurisdiction', 'SG')
-          .textSearch('content_text', query)
+          .textSearch('content_tsv', query)
           .limit(limit);
 
         if (textError) {

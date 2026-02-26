@@ -1,7 +1,5 @@
 import { createClient as supabaseCreateClient } from '@supabase/supabase-js';
-
-// Type-safe client will be available after running: pnpm supabase gen types typescript
-// Until then, the client uses the default `any` schema.
+import type { Database } from './types';
 
 export function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
@@ -13,7 +11,7 @@ export function createClient() {
     );
   }
 
-  return supabaseCreateClient(url, anonKey);
+  return supabaseCreateClient<Database>(url, anonKey);
 }
 
 export function createServiceClient() {
@@ -26,5 +24,5 @@ export function createServiceClient() {
     );
   }
 
-  return supabaseCreateClient(url, serviceKey);
+  return supabaseCreateClient<Database>(url, serviceKey);
 }

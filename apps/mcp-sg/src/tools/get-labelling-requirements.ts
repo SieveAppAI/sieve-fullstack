@@ -10,9 +10,8 @@ export function registerGetLabellingRequirements(server: McpServer) {
       product_category: z
         .enum(['food', 'supplement', 'cosmetic'])
         .describe('Product category'),
-      subcategory: z.string().optional().describe('Product subcategory'),
     },
-    async ({ product_category, subcategory }) => {
+    async ({ product_category }) => {
       const supabase = createServiceClient();
 
       let query = supabase
@@ -41,7 +40,6 @@ export function registerGetLabellingRequirements(server: McpServer) {
               {
                 jurisdiction: 'SG',
                 product_category,
-                subcategory: subcategory ?? null,
                 elements: (requirements ?? []).map((r) => ({
                   element: r.element,
                   mandatory: r.mandatory,

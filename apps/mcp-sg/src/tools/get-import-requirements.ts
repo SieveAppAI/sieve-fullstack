@@ -10,9 +10,8 @@ export function registerGetImportRequirements(server: McpServer) {
       product_category: z
         .enum(['food', 'supplement', 'cosmetic'])
         .describe('Product category'),
-      origin_country: z.string().optional().describe('Country of origin'),
     },
-    async ({ product_category, origin_country }) => {
+    async ({ product_category }) => {
       const supabase = createServiceClient();
 
       const { data: requirements, error } = await supabase
@@ -38,7 +37,6 @@ export function registerGetImportRequirements(server: McpServer) {
               {
                 jurisdiction: 'SG',
                 product_category,
-                origin_country: origin_country ?? null,
                 requirements: (requirements ?? []).map((r) => ({
                   requirement: r.requirement,
                   requirement_type: r.requirement_type,
