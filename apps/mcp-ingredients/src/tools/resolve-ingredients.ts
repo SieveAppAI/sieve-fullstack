@@ -59,13 +59,11 @@ async function resolveOne(
     return toResolved(input.name, nameMatch as IngredientRow, 0.95, 'name_exact');
   }
 
-  // Layer 4: Synonym / common name match
-  const { data: synonymMatches } = await supabase
-    .from('ingredients')
-    .select('*')
-    .or(
-      `synonyms.cs.{${normalizedName}},common_names.cs.{${normalizedName}}`
-    );
+  // Layer 4: Synonym / common name match (case-insensitive via SQL function)
+  const { data: synonymMatches } = await supabase.rpc(
+    'find_ingredient_by_synonym',
+    { search_term: normalizedName }
+  );
 
   if (synonymMatches && synonymMatches.length > 0) {
     return toResolved(

@@ -731,6 +731,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      find_ingredient_by_synonym: {
+        Args: {
+          search_term: string
+        }
+        Returns: {
+          id: string
+          canonical_name: string
+          inci_name: string
+          cas_number: string
+          synonyms: string[]
+          common_names: string[]
+          category: string
+        }[]
+      }
       fuzzy_match_ingredient: {
         Args: {
           search_term: string
