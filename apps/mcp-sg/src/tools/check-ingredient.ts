@@ -10,9 +10,9 @@ export function registerCheckIngredient(server: McpServer) {
       ingredient: z.string().describe('Ingredient name, INCI name, or CAS number'),
       cas_number: z.string().optional().describe('CAS registry number'),
       product_category: z
-        .enum(['food', 'supplement', 'cosmetic'])
+        .string()
         .optional()
-        .describe('Product category'),
+        .describe('Product category (e.g. food, cosmetics, health_supplements, beverages)'),
       concentration_pct: z
         .number()
         .optional()
@@ -45,6 +45,15 @@ export function registerCheckIngredient(server: McpServer) {
         ingredientId = data?.id ?? null;
       }
 
+      // Try synonym/common name match
+      if (!ingredientId) {
+        const { data: synonymMatches } = await supabase.rpc(
+          'find_ingredient_by_synonym',
+          { search_term: normalizedName }
+        );
+        ingredientId = synonymMatches?.[0]?.id ?? null;
+      }
+
       if (!ingredientId) {
         return {
           content: [
@@ -68,11 +77,21 @@ export function registerCheckIngredient(server: McpServer) {
         .eq('ingredient_id', ingredientId)
         .eq('jurisdiction', 'SG');
 
-      if (product_category) {
-        query = query.contains('product_categories', [product_category]);
-      }
+      const { data: allRegulations, error } = await query;
 
-      const { data: regulations, error } = await query;
+      // Filter by product_category client-side for flexible matching
+      let regulations = allRegulations;
+      if (product_category && regulations) {
+        const cat = product_category.toLowerCase();
+        const filtered = regulations.filter((r) =>
+          (r.product_categories as string[])?.some(
+            (pc) => pc.toLowerCase() === cat || pc.toLowerCase().startsWith(cat) || cat.startsWith(pc.toLowerCase())
+          )
+        );
+        if (filtered.length > 0) {
+          regulations = filtered;
+        }
+      }
 
       if (error) {
         return {
