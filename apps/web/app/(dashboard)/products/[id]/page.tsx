@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { createServiceClient } from '@sieve/db';
+import { createSupabaseServer } from '@sieve/db/server';
 import type { OverallStatus, ComplianceFinding, ComplianceStatistics } from '@sieve/shared';
 import { StatusBadge, SeverityBadge } from '@/app/components/status-badge';
 import { RunCheckButton } from './run-check-button';
@@ -8,7 +8,7 @@ import { RunCheckButton } from './run-check-button';
 export const dynamic = 'force-dynamic';
 
 async function getProduct(id: string) {
-  const supabase = createServiceClient();
+  const supabase = await createSupabaseServer();
 
   const { data: product, error } = await supabase
     .from('products')

@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { createSupabaseBrowser } from '@sieve/db';
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard' },
@@ -12,6 +13,13 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleSignOut() {
+    const supabase = createSupabaseBrowser();
+    await supabase.auth.signOut();
+    router.push('/auth/login');
+  }
 
   return (
     <aside className="flex w-60 flex-col border-r border-gray-200 bg-white">
@@ -45,6 +53,15 @@ export function Sidebar() {
           })}
         </ul>
       </nav>
+
+      <div className="border-t border-gray-200 px-3 py-4">
+        <button
+          onClick={handleSignOut}
+          className="block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
+        >
+          Sign Out
+        </button>
+      </div>
     </aside>
   );
 }

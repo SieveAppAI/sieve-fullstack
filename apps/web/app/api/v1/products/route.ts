@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient, type Json } from '@sieve/db';
+import { createSupabaseServer } from '@sieve/db/server';
 
 export async function GET(request: NextRequest) {
   try {
@@ -63,6 +64,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createServiceClient();
+
+    // Get authenticated user
+    const authClient = await createSupabaseServer();
+    const { data: { user } } = await authClient.auth.getUser();
+
     const body = await request.json();
 
     const { name, category, subcategory, ingredients, claims, target_markets } =
@@ -98,6 +104,7 @@ export async function POST(request: NextRequest) {
         formulation,
         claims: claims ?? [],
         target_markets,
+        user_id: user?.id ?? null,
       })
       .select()
       .single();

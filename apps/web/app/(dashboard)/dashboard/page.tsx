@@ -1,12 +1,12 @@
 import Link from 'next/link';
-import { createServiceClient } from '@sieve/db';
+import { createSupabaseServer } from '@sieve/db/server';
 import type { OverallStatus } from '@sieve/shared';
 import { StatusBadge } from '@/app/components/status-badge';
 
 export const dynamic = 'force-dynamic';
 
 async function getProducts() {
-  const supabase = createServiceClient();
+  const supabase = await createSupabaseServer();
 
   const { data: products, error } = await supabase
     .from('products')
