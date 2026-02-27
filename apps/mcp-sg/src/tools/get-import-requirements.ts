@@ -8,8 +8,8 @@ export function registerGetImportRequirements(server: McpServer) {
     'Get import requirements for products entering Singapore',
     {
       product_category: z
-        .enum(['food', 'supplement', 'cosmetic'])
-        .describe('Product category'),
+        .string()
+        .describe('Product category (e.g. food, cosmetic, supplement, beverages)'),
     },
     async ({ product_category }) => {
       const supabase = createServiceClient();
@@ -18,7 +18,7 @@ export function registerGetImportRequirements(server: McpServer) {
         .from('import_requirements')
         .select('*')
         .eq('jurisdiction', 'SG')
-        .eq('product_category', product_category);
+        .ilike('product_category', `%${product_category}%`);
 
       if (error) {
         return {

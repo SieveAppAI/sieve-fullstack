@@ -8,17 +8,18 @@ export function registerGetLabellingRequirements(server: McpServer) {
     'Get mandatory and optional labelling requirements for products in Singapore',
     {
       product_category: z
-        .enum(['food', 'supplement', 'cosmetic'])
-        .describe('Product category'),
+        .string()
+        .describe('Product category (e.g. food, cosmetic, supplement, beverages)'),
     },
     async ({ product_category }) => {
       const supabase = createServiceClient();
 
-      let query = supabase
+      // Use ilike with wildcards for flexible matching against free-text categories
+      const query = supabase
         .from('labelling_requirements')
         .select('*')
         .eq('jurisdiction', 'SG')
-        .eq('product_category', product_category)
+        .ilike('product_category', `%${product_category}%`)
         .order('mandatory', { ascending: false });
 
       const { data: requirements, error } = await query;

@@ -9,8 +9,8 @@ export function registerValidateClaims(server: McpServer) {
     {
       claims: z.array(z.string()).describe('Array of claims to validate'),
       product_category: z
-        .enum(['food', 'supplement', 'cosmetic'])
-        .describe('Product category'),
+        .string()
+        .describe('Product category (e.g. food, cosmetic, supplement, beverages)'),
       nutrition_info: z
         .record(z.number())
         .optional()
@@ -24,12 +24,21 @@ export function registerValidateClaims(server: McpServer) {
           const normalizedClaim = claim.trim().toLowerCase();
 
           // Search claims_rules for matching rules
-          const { data: rules } = await supabase
+          const { data: allRules } = await supabase
             .from('claims_rules')
             .select('*')
             .eq('jurisdiction', 'SG')
-            .contains('product_categories', [product_category])
             .ilike('claim_text', `%${normalizedClaim}%`);
+
+          // Filter by product_category client-side for flexible matching
+          const cat = product_category.toLowerCase();
+          const rules = allRules?.filter((r) => {
+            const cats = r.product_categories as string[] | null;
+            if (!cats || cats.length === 0) return true;
+            return cats.some(
+              (pc) => pc.toLowerCase().includes(cat) || cat.includes(pc.toLowerCase())
+            );
+          }) ?? null;
 
           if (!rules || rules.length === 0) {
             return {
