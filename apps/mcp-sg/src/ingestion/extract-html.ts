@@ -26,6 +26,20 @@ function needsBrowserUse(url: string): boolean {
   }
 }
 
+function toPage(url: string, title: string, text: string, publishedDate: string | null): RegulatoryPage {
+  return {
+    url,
+    title,
+    content_text: text,
+    published_date: publishedDate,
+    domain: new URL(url).hostname,
+    regulatory_body: classifyRegulatoryBody(url),
+    content_type: 'html',
+    scraped_at: new Date().toISOString(),
+    content_hash: createHash('sha256').update(text).digest('hex'),
+  };
+}
+
 export async function extractHtmlContent(
   urls: string[]
 ): Promise<{
@@ -45,6 +59,8 @@ export async function extractHtmlContent(
 
     if (exaUrls.length === 0) continue;
 
+    // Try getContents first (works for URLs Exa has already crawled)
+    const fetchedUrls = new Set<string>();
     try {
       const results = await exa.getContents(exaUrls, {
         text: true,
@@ -53,8 +69,8 @@ export async function extractHtmlContent(
 
       for (const result of results.results) {
         const text = result.text ?? '';
+        fetchedUrls.add(result.url);
 
-        // Check if content is too short or JS-dependent
         if (
           text.length < 100 ||
           text.includes('Please enable JavaScript')
@@ -63,22 +79,38 @@ export async function extractHtmlContent(
           continue;
         }
 
-        pages.push({
-          url: result.url,
-          title: result.title ?? '',
-          content_text: text,
-          published_date: result.publishedDate ?? null,
-          domain: new URL(result.url).hostname,
-          regulatory_body: classifyRegulatoryBody(result.url),
-          content_type: 'html',
-          scraped_at: new Date().toISOString(),
-          content_hash: createHash('sha256').update(text).digest('hex'),
-        });
+        pages.push(toPage(result.url, result.title ?? '', text, result.publishedDate ?? null));
       }
     } catch (err) {
-      console.error(`Exa batch extraction failed`, err);
-      // On failure, try Browser Use for all URLs in the batch
-      browserUseUrls.push(...exaUrls);
+      console.error('Exa getContents failed, falling back to search', err);
+    }
+
+    // For URLs that getContents missed, try searchAndContents per-domain
+    const missedUrls = exaUrls.filter((u) => !fetchedUrls.has(u));
+    if (missedUrls.length > 0) {
+      for (const url of missedUrls) {
+        try {
+          const domain = new URL(url).hostname;
+          const results = await exa.searchAndContents(url, {
+            includeDomains: [domain],
+            numResults: 1,
+            text: true,
+          });
+
+          if (results.results.length > 0) {
+            const r = results.results[0];
+            const text = r.text ?? '';
+            if (text.length >= 100) {
+              pages.push(toPage(r.url, r.title ?? '', text, r.publishedDate ?? null));
+              continue;
+            }
+          }
+          browserUseUrls.push(url);
+        } catch {
+          browserUseUrls.push(url);
+        }
+        await new Promise((r) => setTimeout(r, 500));
+      }
     }
 
     // Rate limiting

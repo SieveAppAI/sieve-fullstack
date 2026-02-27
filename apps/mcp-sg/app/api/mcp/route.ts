@@ -9,7 +9,7 @@ import { registerSearchRegulations } from '@/src/tools/search-regulations';
 import { registerTriggerScrape } from '@/src/tools/trigger-scrape';
 import { registerGetIngestionStatus } from '@/src/tools/get-ingestion-status';
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 function createServer() {
   const server = new McpServer({

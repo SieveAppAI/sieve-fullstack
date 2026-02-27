@@ -108,8 +108,13 @@ If no structured regulatory data can be extracted, return null.`;
     const textBlock = response.content.find((b) => b.type === 'text');
     if (!textBlock || textBlock.type !== 'text') return null;
 
-    const text = textBlock.text.trim();
+    let text = textBlock.text.trim();
     if (text === 'null' || text === '') return null;
+
+    // Strip markdown code fences if present
+    if (text.startsWith('```')) {
+      text = text.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+    }
 
     return JSON.parse(text) as StructuredData;
   } catch (err) {
