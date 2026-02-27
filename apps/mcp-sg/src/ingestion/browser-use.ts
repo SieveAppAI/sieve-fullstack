@@ -2,9 +2,10 @@ import { createHash } from 'crypto';
 import type { RegulatoryPage } from '@sieve/shared';
 import { classifyRegulatoryBody } from './constants';
 
+const BROWSER_USE_API = 'https://api.browser-use.com/api/v2';
+
 /**
- * Browser Use integration for JS-rendered pages and interactive portals.
- * Uses the Vercel Marketplace Browser Use integration.
+ * Browser Use Cloud (v2 API) integration for JS-rendered pages and interactive portals.
  *
  * Known Browser Use-only targets:
  * - SSO legislation (sso.agc.gov.sg) — JS-rendered content
@@ -26,29 +27,40 @@ export async function extractWithBrowserUse(
     try {
       const task = buildTaskForUrl(url);
 
-      const response = await fetch('https://api.browser-use.com/api/v1/run-task', {
+      const response = await fetch(`${BROWSER_USE_API}/tasks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${browserUseApiKey}`,
+          'X-Browser-Use-API-Key': browserUseApiKey,
         },
         body: JSON.stringify({
           task,
-          save_browser_data: false,
+          startUrl: url,
+          maxSteps: 150,
         }),
       });
 
       if (!response.ok) {
-        console.error(`Browser Use failed for ${url}: ${response.status}`);
+        const body = await response.text();
+        console.error(`Browser Use failed for ${url}: ${response.status} ${body}`);
         continue;
       }
 
       const result = await response.json();
       const taskId = result.id;
 
+      if (!taskId) {
+        console.error(`Browser Use returned no task ID for ${url}:`, result);
+        continue;
+      }
+
+      console.log(`Browser Use task ${taskId} started for ${url}`);
+
       // Poll for completion
       const content = await pollForResult(taskId, browserUseApiKey);
       if (!content) continue;
+
+      console.log(`Browser Use extracted ${content.length} chars from ${url}`);
 
       pages.push({
         url,
@@ -65,6 +77,7 @@ export async function extractWithBrowserUse(
       console.error(`Browser Use extraction failed for ${url}:`, err);
     }
 
+    // Rate limit between tasks
     await new Promise((r) => setTimeout(r, 2000));
   }
 
@@ -75,46 +88,55 @@ function buildTaskForUrl(url: string): string {
   const hostname = new URL(url).hostname.toLowerCase();
 
   if (hostname.includes('sso.agc.gov.sg')) {
-    return `Navigate to ${url}. Wait for the page to fully load (it uses JavaScript rendering). Extract the complete legislative text including all sections, schedules, and amendments. Return the full text content.`;
+    return `This is a Singapore Statutes Online page. Wait for the JavaScript-rendered content to fully load. Extract the complete legislative text from the main content area, including: the act/regulation title, all part headings, all section numbers and their text, all schedules, and any amendments. If there are multiple parts or divisions, extract them all. Return the full text content. Do not truncate.`;
   }
 
   if (hostname.includes('hsa.gov.sg') && url.includes('vns')) {
-    return `Navigate to ${url}. This is the HSA Voluntary Notification Scheme page. Find the search/listing functionality for approved health supplement ingredients. Iterate through categories or use the A-Z listing to extract all approved ingredients with their conditions of use. Return structured data.`;
+    return `This is the HSA Voluntary Notification Scheme page. Find the search or listing functionality for approved health supplement ingredients. If there is an A-Z listing or category navigation, iterate through the first few categories to extract approved ingredients with their conditions of use. Return as much structured ingredient data as possible.`;
   }
 
-  return `Navigate to ${url}. Wait for the page to fully load. Extract all text content from the main content area, including tables, lists, and linked documents. Return the complete text.`;
+  return `Wait for the page to fully load. Extract all text content from the main content area, including tables, lists, and any regulatory information. Return the complete text.`;
 }
 
 async function pollForResult(
   taskId: string,
   apiKey: string
 ): Promise<string | null> {
-  const maxAttempts = 30;
+  const maxAttempts = 40; // 40 * 5s = 200s max wait
 
   for (let i = 0; i < maxAttempts; i++) {
     await new Promise((r) => setTimeout(r, 5000));
 
-    const response = await fetch(
-      `https://api.browser-use.com/api/v1/task/${taskId}`,
-      {
-        headers: { Authorization: `Bearer ${apiKey}` },
+    try {
+      const response = await fetch(
+        `${BROWSER_USE_API}/tasks/${taskId}`,
+        {
+          headers: { 'X-Browser-Use-API-Key': apiKey },
+        }
+      );
+
+      if (!response.ok) {
+        console.warn(`Browser Use poll ${i + 1}: HTTP ${response.status}`);
+        continue;
       }
-    );
 
-    if (!response.ok) continue;
+      const result = await response.json();
 
-    const result = await response.json();
+      if (result.status === 'finished') {
+        return result.output ?? null;
+      }
 
-    if (result.status === 'completed') {
-      return result.output ?? null;
-    }
+      if (result.status === 'stopped') {
+        console.error(`Browser Use task ${taskId} was stopped`);
+        return null;
+      }
 
-    if (result.status === 'failed') {
-      console.error(`Browser Use task ${taskId} failed:`, result.error);
-      return null;
+      // 'created' or 'started' — keep polling
+    } catch (err) {
+      console.warn(`Browser Use poll ${i + 1} error:`, err);
     }
   }
 
-  console.error(`Browser Use task ${taskId} timed out`);
+  console.error(`Browser Use task ${taskId} timed out after ${maxAttempts * 5}s`);
   return null;
 }
