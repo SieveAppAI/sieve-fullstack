@@ -21,26 +21,45 @@
 - [x] SG cron jobs + change detection
 - [x] Seed SG regulatory source URLs
 
-## Verification
-- [x] `pnpm install` succeeds
-- [x] `pnpm type-check` passes for all packages and apps
-- [x] `pnpm build` succeeds for all apps
-
 ## Infrastructure
 - [x] Deploy to Vercel (3 projects: web, mcp-ingredients, mcp-sg)
 - [x] Provision shared Supabase instance (consolidate from 3 → 1)
 - [x] Run migrations (schema + unique constraints + RPC functions)
 - [x] Generate Database types (manual from schema)
 - [x] Seed 24 SG regulatory sources + 20 test ingredients + 14 regulations
+- [x] Set API keys (Exa, Anthropic, Browser Use, CRON_SECRET) on Vercel projects
 
-## Testing
+## Data Ingestion
+- [x] First SG scrape batch — 11 sources structured via trigger_scrape
+- [x] Second SG scrape batch — 22+ sources structured (SFA + HSA)
+- [ ] Remaining SSO sources (5 SSO legislation pages — require Browser Use)
+
+## Web App — Compliance Dashboard
+- [x] Tailwind CSS setup (PostCSS config, globals.css)
+- [x] Root layout with sidebar navigation (Inter font)
+- [x] Dashboard page — product portfolio table + summary stats
+- [x] Product workspace — ingredients, claims, compliance summary
+- [x] Compliance report viewer — findings by category/severity
+- [x] New product assessment form
+- [x] API: Products CRUD (GET/POST/PATCH/DELETE)
+- [x] API: Compliance engine orchestrator (fan-out to MCP servers, aggregate findings, compute scores)
+- [x] API: Jurisdictions list
+- [x] API: Ingredient lookup (proxy to ingredients MCP)
+
+## End-to-End Verification
 - [x] Ingredients MCP: resolve_ingredients — CAS, INCI, fuzzy, synonym matching all verified
-- [x] Ingredients MCP: search_ingredient — trigram search verified
-- [x] SG MCP: check_ingredient — banned/restricted/permitted all verified
-- [x] SG MCP: get_ingestion_status — 24 sources pending
+- [x] SG MCP: check_ingredient — Hydroquinone→banned, Retinol→restricted, CoQ10→permitted
+- [x] Web API: Create product + run compliance check (cosmetic: NON_COMPLIANT, food: NEEDS_REVIEW)
+- [x] Deployed: Dashboard loads at sieve-fullstack.vercel.app/dashboard
 
-## Next Steps
-- [ ] Run first SG regulatory scrape (requires EXA_API_KEY + ANTHROPIC_API_KEY in Vercel env)
-- [ ] Web app: compliance dashboard UI
-- [ ] Set up auth (Supabase Auth)
-- [ ] Compliance engine orchestrator (web app API routes)
+## Database State
+- 33 regulatory sources (22 structured, 2 scraped, 13 pending)
+- 33 ingredients, 27 ingredient regulations
+- 71 labelling requirements, 39 claims rules, 37 import requirements
+
+## Remaining
+- [ ] Supabase Auth integration (user login/signup, RLS policies)
+- [ ] Browser Use scraping for SSO legislation (5 pending sources)
+- [ ] Settings page (team settings, API keys, market preferences)
+- [ ] PDF report generation (/api/v1/reports/[id]/pdf)
+- [ ] Audit log tracking
