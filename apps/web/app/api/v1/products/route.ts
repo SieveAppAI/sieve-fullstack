@@ -1,22 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServiceClient, type Json } from '@sieve/db';
 import { createSupabaseServer } from '@sieve/db/server';
+import type { Json } from '@sieve/db';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
-    const supabase = createServiceClient();
-    const userId = request.nextUrl.searchParams.get('user_id');
+    const supabase = await createSupabaseServer();
 
-    let query = supabase
+    const { data: products, error } = await supabase
       .from('products')
       .select('*')
       .order('created_at', { ascending: false });
-
-    if (userId) {
-      query = query.eq('user_id', userId);
-    }
-
-    const { data: products, error } = await query;
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -63,11 +56,12 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createServiceClient();
+    const supabase = await createSupabaseServer();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    // Get authenticated user
-    const authClient = await createSupabaseServer();
-    const { data: { user } } = await authClient.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const body = await request.json();
 
@@ -104,7 +98,7 @@ export async function POST(request: NextRequest) {
         formulation,
         claims: claims ?? [],
         target_markets,
-        user_id: user?.id ?? null,
+        user_id: user.id,
       })
       .select()
       .single();

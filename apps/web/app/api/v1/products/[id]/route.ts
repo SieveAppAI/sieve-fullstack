@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServiceClient } from '@sieve/db';
+import { createSupabaseServer } from '@sieve/db/server';
 
 export async function GET(
   _request: NextRequest,
@@ -7,7 +7,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const supabase = createServiceClient();
+    const supabase = await createSupabaseServer();
 
     const { data: product, error } = await supabase
       .from('products')
@@ -51,7 +51,7 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const supabase = createServiceClient();
+    const supabase = await createSupabaseServer();
     const body = await request.json();
 
     // Only allow updating known product fields
@@ -114,7 +114,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const supabase = createServiceClient();
+    const supabase = await createSupabaseServer();
 
     const { error } = await supabase.from('products').delete().eq('id', id);
 
