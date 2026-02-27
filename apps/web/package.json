@@ -12,9 +12,12 @@
   "dependencies": {
     "@sieve/db": "workspace:*",
     "@sieve/shared": "workspace:*",
+    "@tailwindcss/postcss": "^4.2.1",
     "next": "^15.3.3",
+    "postcss": "^8.5.6",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
     "@sieve/tsconfig": "workspace:*",
