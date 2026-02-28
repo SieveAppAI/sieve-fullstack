@@ -9,6 +9,7 @@ import type {
   FindingCategory,
 } from '@sieve/shared';
 import { calculateComplianceScore, JURISDICTIONS } from '@sieve/shared';
+import { logAudit } from '@/app/lib/audit';
 
 export const maxDuration = 120;
 
@@ -466,6 +467,11 @@ export async function POST(request: NextRequest) {
 
       reports.push(report);
     }
+
+    logAudit('compliance_check_run', product_id, {
+      jurisdictions: targetJurisdictions,
+      statuses: reports.map((r) => r.overall_status),
+    });
 
     // Return single report if only one jurisdiction, otherwise array
     if (reports.length === 1) {

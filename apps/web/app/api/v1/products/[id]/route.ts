@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@sieve/db';
+import { logAudit } from '@/app/lib/audit';
 
 export async function GET(
   _request: NextRequest,
@@ -99,6 +100,8 @@ export async function PATCH(
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    logAudit('product_updated', id, { fields: Object.keys(updates) });
+
     return NextResponse.json({ product: data });
   } catch (err) {
     return NextResponse.json(
@@ -121,6 +124,8 @@ export async function DELETE(
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    logAudit('product_deleted', id);
 
     return NextResponse.json({ deleted: true });
   } catch (err) {

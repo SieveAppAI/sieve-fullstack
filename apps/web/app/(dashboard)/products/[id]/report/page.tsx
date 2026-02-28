@@ -9,6 +9,7 @@ import type {
   ComplianceStatistics,
 } from '@sieve/shared';
 import { StatusBadge, SeverityBadge } from '@/app/components/status-badge';
+import { DownloadReportButton } from './download-button';
 
 export const dynamic = 'force-dynamic';
 
@@ -104,13 +105,16 @@ export default async function ReportPage({
       </div>
 
       {/* Report Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Compliance Report
-        </h1>
-        <p className="mt-1 text-sm text-gray-500">
-          {product.name} &mdash; {check.jurisdiction}
-        </p>
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Compliance Report
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            {product.name} &mdash; {check.jurisdiction}
+          </p>
+        </div>
+        <DownloadReportButton productId={product.id} />
       </div>
 
       {/* Summary Cards */}

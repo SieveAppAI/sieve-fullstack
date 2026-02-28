@@ -5,7 +5,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { createSupabaseBrowser } from '@sieve/db';
 
 const navItems = [
-  { label: 'Dashboard', href: '/dashboard' },
   { label: 'Products', href: '/dashboard' },
   { label: 'New Assessment', href: '/products/new' },
   { label: 'Settings', href: '/settings' },

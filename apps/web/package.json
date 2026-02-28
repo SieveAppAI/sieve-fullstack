@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@react-pdf/renderer": "^4.3.2",
     "@sieve/db": "workspace:*",
     "@sieve/shared": "workspace:*",
     "@tailwindcss/postcss": "^4.2.1",

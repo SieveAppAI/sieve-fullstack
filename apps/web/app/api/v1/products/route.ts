@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient, type Json } from '@sieve/db';
+import { logAudit } from '@/app/lib/audit';
 
 export async function GET(_request: NextRequest) {
   try {
@@ -100,6 +101,8 @@ export async function POST(request: NextRequest) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    logAudit('product_created', data.id, { name, category, target_markets });
 
     return NextResponse.json({ product: data }, { status: 201 });
   } catch (err) {

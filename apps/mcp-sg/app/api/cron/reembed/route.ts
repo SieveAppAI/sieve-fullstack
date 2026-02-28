@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { reembedSources } from '@/src/ingestion/embed';
+
+export const maxDuration = 300;
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
@@ -6,6 +9,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // TODO: implement monthly re-embedding
-  return NextResponse.json({ status: 'ok', embedded: 0 });
+  const result = await reembedSources();
+  return NextResponse.json({ status: 'ok', ...result });
 }
