@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseServer } from '@sieve/db/server';
-import type { Json } from '@sieve/db';
+import { createServiceClient, type Json } from '@sieve/db';
 
 export async function GET(_request: NextRequest) {
   try {
-    const supabase = await createSupabaseServer();
+    const supabase = createServiceClient();
 
     const { data: products, error } = await supabase
       .from('products')
@@ -56,12 +55,7 @@ export async function GET(_request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createSupabaseServer();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const supabase = createServiceClient();
 
     const body = await request.json();
 
@@ -98,7 +92,7 @@ export async function POST(request: NextRequest) {
         formulation,
         claims: claims ?? [],
         target_markets,
-        user_id: user.id,
+        user_id: null,
       })
       .select()
       .single();

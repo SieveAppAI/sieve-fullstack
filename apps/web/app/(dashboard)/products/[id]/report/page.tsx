@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { createSupabaseServer } from '@sieve/db/server';
+import { createServiceClient } from '@sieve/db';
 import type {
   OverallStatus,
   Severity,
@@ -13,7 +13,7 @@ import { StatusBadge, SeverityBadge } from '@/app/components/status-badge';
 export const dynamic = 'force-dynamic';
 
 async function getReport(productId: string) {
-  const supabase = await createSupabaseServer();
+  const supabase = createServiceClient();
 
   const { data: product } = await supabase
     .from('products')

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient, type Json } from '@sieve/db';
-import { createSupabaseServer } from '@sieve/db/server';
 import type {
   ComplianceFinding,
   ComplianceReport,
@@ -255,13 +254,6 @@ function mapImportFindings(result: ImportMcpResult): ComplianceFinding[] {
 
 export async function POST(request: NextRequest) {
   try {
-    // Verify auth — user must own the product
-    const authClient = await createSupabaseServer();
-    const { data: { user } } = await authClient.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const supabase = createServiceClient();
     const body = await request.json();
 
@@ -277,12 +269,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 1. Fetch product (verify ownership)
+    // 1. Fetch product
     const { data: product, error: productError } = await supabase
       .from('products')
       .select('*')
       .eq('id', product_id)
-      .eq('user_id', user.id)
       .single();
 
     if (productError) {
