@@ -3,6 +3,15 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { createServiceClient } from '@sieve/db';
 import { embedQuery } from '@/src/ingestion/embed-query';
 
+function textSearchFallback(supabase: ReturnType<typeof createServiceClient>, query: string, limit: number) {
+  return supabase
+    .from('regulatory_sources')
+    .select('url, title, content_text, regulatory_body')
+    .eq('jurisdiction', 'SG')
+    .textSearch('content_tsv', query)
+    .limit(limit);
+}
+
 export function registerSearchRegulations(server: McpServer) {
   server.tool(
     'search_regulations',
@@ -14,6 +23,7 @@ export function registerSearchRegulations(server: McpServer) {
     async ({ query, limit }) => {
       const supabase = createServiceClient();
 
+      // Try vector search first
       try {
         const vector = await embedQuery(query);
 
@@ -23,68 +33,61 @@ export function registerSearchRegulations(server: McpServer) {
           result_limit: limit,
         });
 
-        if (error) throw error;
-
-        return {
-          content: [
-            {
-              type: 'text' as const,
-              text: JSON.stringify(
-                {
-                  jurisdiction: 'SG',
-                  query,
-                  results: data ?? [],
-                },
-                null,
-                2
-              ),
-            },
-          ],
-        };
-      } catch {
-        // Fallback to text search (handles missing API key, no embeddings, etc.)
-        const { data: textResults, error: textError } = await supabase
-          .from('regulatory_sources')
-          .select('url, title, content_text, regulatory_body')
-          .eq('jurisdiction', 'SG')
-          .textSearch('content_tsv', query)
-          .limit(limit);
-
-        if (textError) {
+        if (!error && data && data.length > 0) {
           return {
             content: [
               {
                 type: 'text' as const,
-                text: JSON.stringify({ error: textError.message }),
+                text: JSON.stringify(
+                  { jurisdiction: 'SG', query, results: data },
+                  null,
+                  2
+                ),
               },
             ],
-            isError: true,
           };
         }
+      } catch {
+        // fall through to text search
+      }
 
+      // Fallback to text search (empty vector results, missing API key, no embeddings, etc.)
+      const { data: textResults, error: textError } = await textSearchFallback(supabase, query, limit);
+
+      if (textError) {
         return {
           content: [
             {
               type: 'text' as const,
-              text: JSON.stringify(
-                {
-                  jurisdiction: 'SG',
-                  query,
-                  fallback: 'text_search',
-                  results: (textResults ?? []).map((r) => ({
-                    chunk_text: r.content_text?.slice(0, 500) ?? '',
-                    source_url: r.url,
-                    regulatory_body: r.regulatory_body,
-                    similarity: 0,
-                  })),
-                },
-                null,
-                2
-              ),
+              text: JSON.stringify({ error: textError.message }),
             },
           ],
+          isError: true,
         };
       }
+
+      return {
+        content: [
+          {
+            type: 'text' as const,
+            text: JSON.stringify(
+              {
+                jurisdiction: 'SG',
+                query,
+                fallback: 'text_search',
+                results: (textResults ?? []).map((r) => ({
+                  chunk_text: r.content_text?.slice(0, 500) ?? '',
+                  source_url: r.url,
+                  regulatory_body: r.regulatory_body,
+                  similarity: 0,
+                })),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
     }
   );
 }
