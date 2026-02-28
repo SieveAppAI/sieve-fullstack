@@ -58,7 +58,7 @@ export function registerCheckIngredient(server: McpServer) {
       if (!ingredientId) {
         const { data: fuzzyMatches } = await supabase.rpc(
           'fuzzy_match_ingredient',
-          { search_term: normalizedName, similarity_threshold: 0.3, result_limit: 1 }
+          { search_term: normalizedName, similarity_threshold: 0.2, result_limit: 1 }
         );
         ingredientId = fuzzyMatches?.[0]?.id ?? null;
       }
