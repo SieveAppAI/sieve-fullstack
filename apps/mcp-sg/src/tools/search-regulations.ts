@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { createServiceClient } from '@sieve/db';
+import { embedQuery } from '@/src/ingestion/embed-query';
 
 export function registerSearchRegulations(server: McpServer) {
   server.tool(
@@ -13,15 +14,35 @@ export function registerSearchRegulations(server: McpServer) {
     async ({ query, limit }) => {
       const supabase = createServiceClient();
 
-      // Use RPC for vector similarity search
-      const { data, error } = await supabase.rpc('search_regulatory_content', {
-        query_text: query,
-        jurisdiction_filter: 'SG',
-        result_limit: limit,
-      });
+      try {
+        const vector = await embedQuery(query);
 
-      if (error) {
-        // Fallback to text search if vector search not available
+        const { data, error } = await supabase.rpc('search_regulatory_content', {
+          query_embedding: `[${vector.join(',')}]`,
+          jurisdiction_filter: 'SG',
+          result_limit: limit,
+        });
+
+        if (error) throw error;
+
+        return {
+          content: [
+            {
+              type: 'text' as const,
+              text: JSON.stringify(
+                {
+                  jurisdiction: 'SG',
+                  query,
+                  results: data ?? [],
+                },
+                null,
+                2
+              ),
+            },
+          ],
+        };
+      } catch {
+        // Fallback to text search (handles missing API key, no embeddings, etc.)
         const { data: textResults, error: textError } = await supabase
           .from('regulatory_sources')
           .select('url, title, content_text, regulatory_body')
@@ -49,6 +70,7 @@ export function registerSearchRegulations(server: McpServer) {
                 {
                   jurisdiction: 'SG',
                   query,
+                  fallback: 'text_search',
                   results: (textResults ?? []).map((r) => ({
                     chunk_text: r.content_text?.slice(0, 500) ?? '',
                     source_url: r.url,
@@ -63,23 +85,6 @@ export function registerSearchRegulations(server: McpServer) {
           ],
         };
       }
-
-      return {
-        content: [
-          {
-            type: 'text' as const,
-            text: JSON.stringify(
-              {
-                jurisdiction: 'SG',
-                query,
-                results: data ?? [],
-              },
-              null,
-              2
-            ),
-          },
-        ],
-      };
     }
   );
 }

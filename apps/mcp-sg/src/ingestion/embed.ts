@@ -1,15 +1,9 @@
+import { embedMany } from 'ai';
+import { openai } from '@ai-sdk/openai';
 import { createServiceClient } from '@sieve/db';
 
-const VOYAGE_API_URL = 'https://api.voyageai.com/v1/embeddings';
-const VOYAGE_MODEL = 'voyage-3';
-const EMBEDDING_DIM = 1024;
-const BATCH_SIZE = 64;
 const CHUNK_WORDS = 500;
 const OVERLAP_WORDS = 50;
-
-interface VoyageResponse {
-  data: { embedding: number[] }[];
-}
 
 function chunkText(text: string): string[] {
   const words = text.split(/\s+/);
@@ -28,35 +22,10 @@ function chunkText(text: string): string[] {
   return chunks;
 }
 
-async function getEmbeddings(
-  texts: string[],
-  apiKey: string,
-): Promise<number[][]> {
-  const response = await fetch(VOYAGE_API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      input: texts,
-      model: VOYAGE_MODEL,
-      output_dimension: EMBEDDING_DIM,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Voyage API error ${response.status}: ${await response.text()}`);
-  }
-
-  const json = (await response.json()) as VoyageResponse;
-  return json.data.map((d) => d.embedding);
-}
-
 export async function reembedSources(): Promise<{ embedded: number; errors: string[] }> {
-  const apiKey = process.env.VOYAGE_API_KEY?.trim();
+  const apiKey = process.env.OPENAI_API_KEY?.trim();
   if (!apiKey) {
-    return { embedded: 0, errors: [] };
+    return { embedded: 0, errors: ['OPENAI_API_KEY not set'] };
   }
 
   const supabase = createServiceClient();
@@ -92,35 +61,30 @@ export async function reembedSources(): Promise<{ embedded: number; errors: stri
 
   let totalEmbedded = 0;
 
-  // Process each source: chunk, embed, store
   for (const source of toEmbed) {
     try {
       const chunks = chunkText(source.content_text!);
-      const allInserts: { source_id: string; chunk_text: string; embedding: string }[] = [];
 
-      // Embed chunks in batches
-      for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
-        const batch = chunks.slice(i, i + BATCH_SIZE);
-        const embeddings = await getEmbeddings(batch, apiKey);
+      const { embeddings } = await embedMany({
+        model: openai.embedding('text-embedding-3-small'),
+        values: chunks,
+        providerOptions: { openai: { dimensions: 1024 } },
+      });
 
-        for (let j = 0; j < batch.length; j++) {
-          allInserts.push({
-            source_id: source.id,
-            chunk_text: batch[j],
-            embedding: `[${embeddings[j].join(',')}]`,
-          });
-        }
-      }
+      const inserts = chunks.map((text, i) => ({
+        source_id: source.id,
+        chunk_text: text,
+        embedding: `[${embeddings[i].join(',')}]`,
+      }));
 
-      // Insert all chunks for this source
       const { error } = await supabase
         .from('regulatory_embeddings')
-        .insert(allInserts);
+        .insert(inserts);
 
       if (error) {
         errors.push(`${source.url}: ${error.message}`);
       } else {
-        totalEmbedded += allInserts.length;
+        totalEmbedded += inserts.length;
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);

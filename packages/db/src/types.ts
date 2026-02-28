@@ -780,7 +780,7 @@ export type Database = {
       }
       search_regulatory_content: {
         Args: {
-          query_text: string
+          query_embedding: string
           jurisdiction_filter?: string
           result_limit?: number
         }
