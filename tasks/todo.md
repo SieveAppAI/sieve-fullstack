@@ -63,9 +63,9 @@
 - [x] Create `embed-query.ts` helper for search-time embedding
 - [x] Update `search-regulations.ts` to embed query and pass vector to RPC
 - [x] Update DB types to match new RPC signature (`query_embedding` instead of `query_text`)
-- [ ] Run migration `00006_fix_vector_search_rpc.sql` against Supabase
-- [ ] Set `OPENAI_API_KEY` in Vercel project settings for mcp-sg
-- [ ] Trigger `/api/cron/reembed` to generate embeddings
+- [x] Run migration `00006_fix_vector_search_rpc.sql` against Supabase
+- [x] Set `OPENAI_API_KEY` in Vercel project settings for mcp-sg
+- [x] Trigger `/api/cron/reembed` to generate embeddings (898 chunks embedded)
 
 ## Remaining
 - [ ] Supabase Auth integration (user login/signup, RLS policies)
