@@ -8,7 +8,7 @@ function textSearchFallback(supabase: ReturnType<typeof createServiceClient>, qu
     .from('regulatory_sources')
     .select('url, title, content_text, regulatory_body')
     .eq('jurisdiction', 'SG')
-    .textSearch('content_tsv', query)
+    .textSearch('content_tsv', query, { type: 'websearch' })
     .limit(limit);
 }
 
@@ -52,18 +52,35 @@ export function registerSearchRegulations(server: McpServer) {
       }
 
       // Fallback to text search (empty vector results, missing API key, no embeddings, etc.)
-      const { data: textResults, error: textError } = await textSearchFallback(supabase, query, limit);
+      try {
+        const { data: textResults, error: textError } = await textSearchFallback(supabase, query, limit);
 
-      if (textError) {
-        return {
-          content: [
-            {
-              type: 'text' as const,
-              text: JSON.stringify({ error: textError.message }),
-            },
-          ],
-          isError: true,
-        };
+        if (!textError && textResults && textResults.length > 0) {
+          return {
+            content: [
+              {
+                type: 'text' as const,
+                text: JSON.stringify(
+                  {
+                    jurisdiction: 'SG',
+                    query,
+                    fallback: 'text_search',
+                    results: textResults.map((r) => ({
+                      chunk_text: r.content_text?.slice(0, 500) ?? '',
+                      source_url: r.url,
+                      regulatory_body: r.regulatory_body,
+                      similarity: 0,
+                    })),
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        }
+      } catch {
+        // text search also failed — return empty
       }
 
       return {
@@ -71,17 +88,7 @@ export function registerSearchRegulations(server: McpServer) {
           {
             type: 'text' as const,
             text: JSON.stringify(
-              {
-                jurisdiction: 'SG',
-                query,
-                fallback: 'text_search',
-                results: (textResults ?? []).map((r) => ({
-                  chunk_text: r.content_text?.slice(0, 500) ?? '',
-                  source_url: r.url,
-                  regulatory_body: r.regulatory_body,
-                  similarity: 0,
-                })),
-              },
+              { jurisdiction: 'SG', query, results: [] },
               null,
               2
             ),
