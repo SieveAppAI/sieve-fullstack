@@ -1,4 +1,4 @@
-export type RegulatoryBody = 'SFA' | 'HSA' | 'NEA' | 'SSO' | 'OTHER';
+export type RegulatoryBody = 'SFA' | 'HSA' | 'NEA' | 'SSO' | 'FDA' | 'FTC' | 'USDA' | 'CIR' | 'OTHER';
 export type ContentType = 'html' | 'pdf';
 export type IngestionTier = 'exa' | 'browser_use' | 'manual';
 export type ScrapeStatus = 'pending' | 'scraped' | 'structured' | 'error';
