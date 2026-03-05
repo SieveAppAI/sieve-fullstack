@@ -18,6 +18,272 @@ importers:
         specifier: ^5.8.3
         version: 5.9.3
 
+  apps/mcp-au:
+    dependencies:
+      '@ai-sdk/openai':
+        specifier: ^3.0.37
+        version: 3.0.37(zod@3.25.76)
+      '@anthropic-ai/sdk':
+        specifier: ^0.52.0
+        version: 0.52.0
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.12.1
+        version: 1.27.1(zod@3.25.76)
+      '@sieve/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@sieve/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      ai:
+        specifier: ^6.0.105
+        version: 6.0.105(zod@3.25.76)
+      exa-js:
+        specifier: ^1.6.0
+        version: 1.10.2(ws@8.19.0)
+      next:
+        specifier: ^15.3.3
+        version: 15.5.12(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react:
+        specifier: ^19.1.0
+        version: 19.2.4
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.2.4(react@19.2.4)
+      zod:
+        specifier: ^3.25.20
+        version: 3.25.76
+    devDependencies:
+      '@sieve/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: ^22.15.21
+        version: 22.19.11
+      '@types/react':
+        specifier: ^19.1.4
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.1.5
+        version: 19.2.3(@types/react@19.2.14)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+
+  apps/mcp-cn:
+    dependencies:
+      '@ai-sdk/openai':
+        specifier: ^3.0.37
+        version: 3.0.37(zod@3.25.76)
+      '@anthropic-ai/sdk':
+        specifier: ^0.52.0
+        version: 0.52.0
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.12.1
+        version: 1.27.1(zod@3.25.76)
+      '@sieve/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@sieve/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      ai:
+        specifier: ^6.0.105
+        version: 6.0.105(zod@3.25.76)
+      exa-js:
+        specifier: ^1.6.0
+        version: 1.10.2(ws@8.19.0)
+      next:
+        specifier: ^15.3.3
+        version: 15.5.12(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react:
+        specifier: ^19.1.0
+        version: 19.2.4
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.2.4(react@19.2.4)
+      xlsx:
+        specifier: ^0.18.5
+        version: 0.18.5
+      zod:
+        specifier: ^3.25.20
+        version: 3.25.76
+    devDependencies:
+      '@sieve/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: ^22.15.21
+        version: 22.19.11
+      '@types/react':
+        specifier: ^19.1.4
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.1.5
+        version: 19.2.3(@types/react@19.2.14)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+
+  apps/mcp-eu:
+    dependencies:
+      '@ai-sdk/openai':
+        specifier: ^3.0.37
+        version: 3.0.37(zod@3.25.76)
+      '@anthropic-ai/sdk':
+        specifier: ^0.52.0
+        version: 0.52.0
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.12.1
+        version: 1.27.1(zod@3.25.76)
+      '@sieve/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@sieve/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      ai:
+        specifier: ^6.0.105
+        version: 6.0.105(zod@3.25.76)
+      exa-js:
+        specifier: ^1.6.0
+        version: 1.10.2(ws@8.19.0)
+      next:
+        specifier: ^15.3.3
+        version: 15.5.12(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react:
+        specifier: ^19.1.0
+        version: 19.2.4
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.2.4(react@19.2.4)
+      xlsx:
+        specifier: ^0.18.5
+        version: 0.18.5
+      zod:
+        specifier: ^3.25.20
+        version: 3.25.76
+    devDependencies:
+      '@sieve/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: ^22.15.21
+        version: 22.19.11
+      '@types/react':
+        specifier: ^19.1.4
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.1.5
+        version: 19.2.3(@types/react@19.2.14)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+
+  apps/mcp-gcc:
+    dependencies:
+      '@ai-sdk/openai':
+        specifier: ^3.0.37
+        version: 3.0.37(zod@3.25.76)
+      '@anthropic-ai/sdk':
+        specifier: ^0.52.0
+        version: 0.52.0
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.12.1
+        version: 1.27.1(zod@3.25.76)
+      '@sieve/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@sieve/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      ai:
+        specifier: ^6.0.105
+        version: 6.0.105(zod@3.25.76)
+      exa-js:
+        specifier: ^1.6.0
+        version: 1.10.2(ws@8.19.0)
+      next:
+        specifier: ^15.3.3
+        version: 15.5.12(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react:
+        specifier: ^19.1.0
+        version: 19.2.4
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.2.4(react@19.2.4)
+      zod:
+        specifier: ^3.25.20
+        version: 3.25.76
+    devDependencies:
+      '@sieve/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: ^22.15.21
+        version: 22.19.11
+      '@types/react':
+        specifier: ^19.1.4
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.1.5
+        version: 19.2.3(@types/react@19.2.14)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+
+  apps/mcp-in:
+    dependencies:
+      '@ai-sdk/openai':
+        specifier: ^3.0.37
+        version: 3.0.37(zod@3.25.76)
+      '@anthropic-ai/sdk':
+        specifier: ^0.52.0
+        version: 0.52.0
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.12.1
+        version: 1.27.1(zod@3.25.76)
+      '@sieve/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@sieve/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      ai:
+        specifier: ^6.0.105
+        version: 6.0.105(zod@3.25.76)
+      exa-js:
+        specifier: ^1.6.0
+        version: 1.10.2(ws@8.19.0)
+      next:
+        specifier: ^15.3.3
+        version: 15.5.12(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react:
+        specifier: ^19.1.0
+        version: 19.2.4
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.2.4(react@19.2.4)
+      zod:
+        specifier: ^3.25.20
+        version: 3.25.76
+    devDependencies:
+      '@sieve/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: ^22.15.21
+        version: 22.19.11
+      '@types/react':
+        specifier: ^19.1.4
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.1.5
+        version: 19.2.3(@types/react@19.2.14)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+
   apps/mcp-ingredients:
     dependencies:
       '@modelcontextprotocol/sdk':
@@ -29,6 +295,58 @@ importers:
       '@sieve/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      next:
+        specifier: ^15.3.3
+        version: 15.5.12(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react:
+        specifier: ^19.1.0
+        version: 19.2.4
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.2.4(react@19.2.4)
+      zod:
+        specifier: ^3.25.20
+        version: 3.25.76
+    devDependencies:
+      '@sieve/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: ^22.15.21
+        version: 22.19.11
+      '@types/react':
+        specifier: ^19.1.4
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.1.5
+        version: 19.2.3(@types/react@19.2.14)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+
+  apps/mcp-jp:
+    dependencies:
+      '@ai-sdk/openai':
+        specifier: ^3.0.37
+        version: 3.0.37(zod@3.25.76)
+      '@anthropic-ai/sdk':
+        specifier: ^0.52.0
+        version: 0.52.0
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.12.1
+        version: 1.27.1(zod@3.25.76)
+      '@sieve/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@sieve/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      ai:
+        specifier: ^6.0.105
+        version: 6.0.105(zod@3.25.76)
+      exa-js:
+        specifier: ^1.6.0
+        version: 1.10.2(ws@8.19.0)
       next:
         specifier: ^15.3.3
         version: 15.5.12(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -142,6 +460,9 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.2.4(react@19.2.4)
+      xlsx:
+        specifier: ^0.18.5
+        version: 0.18.5
       zod:
         specifier: ^3.25.20
         version: 3.25.76
@@ -854,6 +1175,10 @@ packages:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
     engines: {node: '>= 0.6'}
 
+  adler-32@1.3.1:
+    resolution: {integrity: sha512-ynZ4w/nUUv5rrsR8UUGoe1VC9hZj6V5hU9Qw1HlMDJGEJw5S7TfTErWTjMys6M7vr0YWcPqs3qAr4ss0nDfP+A==}
+    engines: {node: '>=0.8'}
+
   ai@6.0.105:
     resolution: {integrity: sha512-rp+exWtZS3J0DDvZIfetpKCIg7D3cCsvBPoFN3I67IDTs9aoBZDbpecoIkmNLT+U9RBkoEial3OGHRvme23HCw==}
     engines: {node: '>=18'}
@@ -906,11 +1231,19 @@ packages:
   caniuse-lite@1.0.30001774:
     resolution: {integrity: sha512-DDdwPGz99nmIEv216hKSgLD+D4ikHQHjBC/seF98N9CPqRX4M5mSxT9eTV6oyisnJcuzxtZy4n17yKKQYmYQOA==}
 
+  cfb@1.2.2:
+    resolution: {integrity: sha512-KfdUZsSOw19/ObEWasvBP/Ac4reZvAGauZhs6S/gqNhXhI7cKwvlH7ulj+dOEYnca4bm4SGo8C1bTAQvnTjgQA==}
+    engines: {node: '>=0.8'}
+
   client-only@0.0.1:
     resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
 
   clone@2.1.2:
     resolution: {integrity: sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==}
+    engines: {node: '>=0.8'}
+
+  codepage@1.15.0:
+    resolution: {integrity: sha512-3g6NUTPd/YtuuGrhMnOMRjFc+LJw/bnMp3+0r/Wcz3IXUuCosKRJvMphm5+Q+bvTVGcJJuRvVLuYba+WojaFaA==}
     engines: {node: '>=0.8'}
 
   color-name@1.1.4:
@@ -942,6 +1275,11 @@ packages:
   cors@2.8.6:
     resolution: {integrity: sha512-tJtZBBHA6vjIAaF6EnIaq6laBBP9aq/Y3ouVJjEfoHbRBcHBAHYcMh/w8LDrk2PvIMMq8gmopa5D4V8RmbrxGw==}
     engines: {node: '>= 0.10'}
+
+  crc-32@1.2.2:
+    resolution: {integrity: sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==}
+    engines: {node: '>=0.8'}
+    hasBin: true
 
   cross-fetch@4.1.0:
     resolution: {integrity: sha512-uKm5PU+MHTootlWEY+mZ4vvXoCn4fLQxT9dSc1sXVMSFkINTJVN8cAQROpwcKm8bJ/c7rgZVIBWzH5T78sNZZw==}
@@ -1063,6 +1401,10 @@ packages:
   forwarded@0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
+
+  frac@1.1.2:
+    resolution: {integrity: sha512-w/XBfkibaTl3YDqASwfDUqkna4Z2p9cFSr1aHDt0WoMTECnRfBOv2WArlZILlqgWlmdIlALXGpM2AOhEk5W3IA==}
+    engines: {node: '>=0.8'}
 
   fresh@2.0.0:
     resolution: {integrity: sha512-Rx/WycZ60HOaqLKAi6cHRKKI7zxWbJ31MhntmtwMoaTeF7XFH9hhBp8vITaMidfljRQ6eYWCKkaTK+ykVJHP2A==}
@@ -1496,6 +1838,10 @@ packages:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
 
+  ssf@0.11.2:
+    resolution: {integrity: sha512-+idbmIXoYET47hH+d7dfm2epdOMUDjqcB4648sTZ+t2JwoyBFL/insLfB/racrDmsKB3diwsDA696pZMieAC5g==}
+    engines: {node: '>=0.8'}
+
   statuses@2.0.2:
     resolution: {integrity: sha512-DvEy55V3DB7uknRo+4iOGT5fP1slR8wQohVdknigZPMpMstaKJQWhwiYBACJE3Ul2pTnATihhBYnRhZQHGBiRw==}
     engines: {node: '>= 0.8'}
@@ -1622,6 +1968,14 @@ packages:
     engines: {node: '>= 8'}
     hasBin: true
 
+  wmf@1.0.2:
+    resolution: {integrity: sha512-/p9K7bEh0Dj6WbXg4JG0xvLQmIadrner1bi45VMJTfnbVHsc7yIajZyoSoK60/dtVBs12Fm6WkUI5/3WAVsNMw==}
+    engines: {node: '>=0.8'}
+
+  word@0.3.0:
+    resolution: {integrity: sha512-OELeY0Q61OXpdUfTp+oweA/vtLVg5VDOXh+3he3PNzLGG/y0oylSOC1xRVj0+l4vQ3tj/bB1HVHv1ocXkQceFA==}
+    engines: {node: '>=0.8'}
+
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
@@ -1636,6 +1990,11 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+
+  xlsx@0.18.5:
+    resolution: {integrity: sha512-dmg3LCjBPHZnQp5/F/+nnTa+miPJxUXB6vtk42YjBBKayDNagxGEeIdWApkYPOf3Z3pm3k62Knjzp7lMeTEtFQ==}
+    engines: {node: '>=0.8'}
+    hasBin: true
 
   yoga-layout@3.2.1:
     resolution: {integrity: sha512-0LPOt3AxKqMdFBZA3HBAt/t/8vIKq7VaQYbuA8WxCgung+p9TVyKRYdpvCb80HcdTN2NkbIKbhNwKUfm3tQywQ==}
@@ -2179,6 +2538,8 @@ snapshots:
       mime-types: 3.0.2
       negotiator: 1.0.0
 
+  adler-32@1.3.1: {}
+
   ai@6.0.105(zod@3.25.76):
     dependencies:
       '@ai-sdk/gateway': 3.0.59(zod@3.25.76)
@@ -2242,9 +2603,16 @@ snapshots:
 
   caniuse-lite@1.0.30001774: {}
 
+  cfb@1.2.2:
+    dependencies:
+      adler-32: 1.3.1
+      crc-32: 1.2.2
+
   client-only@0.0.1: {}
 
   clone@2.1.2: {}
+
+  codepage@1.15.0: {}
 
   color-name@1.1.4: {}
 
@@ -2267,6 +2635,8 @@ snapshots:
     dependencies:
       object-assign: 4.1.1
       vary: 1.1.2
+
+  crc-32@1.2.2: {}
 
   cross-fetch@4.1.0:
     dependencies:
@@ -2439,6 +2809,8 @@ snapshots:
       unicode-trie: 2.0.0
 
   forwarded@0.2.0: {}
+
+  frac@1.1.2: {}
 
   fresh@2.0.0: {}
 
@@ -2857,6 +3229,10 @@ snapshots:
 
   source-map-js@1.2.1: {}
 
+  ssf@0.11.2:
+    dependencies:
+      frac: 1.1.2
+
   statuses@2.0.2: {}
 
   string_decoder@1.3.0:
@@ -2959,9 +3335,23 @@ snapshots:
     dependencies:
       isexe: 2.0.0
 
+  wmf@1.0.2: {}
+
+  word@0.3.0: {}
+
   wrappy@1.0.2: {}
 
   ws@8.19.0: {}
+
+  xlsx@0.18.5:
+    dependencies:
+      adler-32: 1.3.1
+      cfb: 1.2.2
+      codepage: 1.15.0
+      crc-32: 1.2.2
+      ssf: 0.11.2
+      wmf: 1.0.2
+      word: 0.3.0
 
   yoga-layout@3.2.1: {}
 

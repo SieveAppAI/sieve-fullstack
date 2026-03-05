@@ -5,7 +5,7 @@ interface SeedSource {
   title: string;
   regulatory_body: string;
   content_type: 'html' | 'pdf';
-  ingestion_tier: 'exa' | 'browser_use';
+  ingestion_tier: 'exa' | 'browser_use' | 'ecfr_api';
   browser_use_task?: string;
   frequency: 'daily' | 'weekly' | 'monthly';
 }
@@ -149,35 +149,29 @@ const US_SEED_SOURCES: SeedSource[] = [
     frequency: 'weekly',
   },
 
-  // ===== eCFR — Title 21 (Browser Use required) =====
+  // ===== eCFR — Title 21 (via direct API) =====
   {
-    url: 'https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-101',
+    url: 'https://www.ecfr.gov/current/title-21/part-101',
     title: '21 CFR Part 101 — Food Labeling',
     regulatory_body: 'FDA',
     content_type: 'html',
-    ingestion_tier: 'browser_use',
-    browser_use_task:
-      'Navigate to 21 CFR Part 101 (Food Labeling) on eCFR. Wait for the page to fully render. Extract the complete regulatory text including all subparts, sections, and tables.',
+    ingestion_tier: 'ecfr_api',
     frequency: 'monthly',
   },
   {
-    url: 'https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-170',
+    url: 'https://www.ecfr.gov/current/title-21/part-170',
     title: '21 CFR Part 170 — Food Additives General Provisions',
     regulatory_body: 'FDA',
     content_type: 'html',
-    ingestion_tier: 'browser_use',
-    browser_use_task:
-      'Navigate to 21 CFR Part 170 (Food Additives) on eCFR. Wait for the page to fully render. Extract the complete regulatory text including all sections on GRAS and food additive petition procedures.',
+    ingestion_tier: 'ecfr_api',
     frequency: 'monthly',
   },
   {
-    url: 'https://www.ecfr.gov/current/title-21/chapter-I/subchapter-G',
-    title: '21 CFR Subchapter G — Cosmetics',
+    url: 'https://www.ecfr.gov/current/title-21/part-700',
+    title: '21 CFR Part 700 — Cosmetics General',
     regulatory_body: 'FDA',
     content_type: 'html',
-    ingestion_tier: 'browser_use',
-    browser_use_task:
-      'Navigate to 21 CFR Subchapter G (Cosmetics) on eCFR. Wait for the page to fully render. Extract the complete regulatory text covering Parts 700-740 including prohibited ingredients and labelling.',
+    ingestion_tier: 'ecfr_api',
     frequency: 'monthly',
   },
 
@@ -207,6 +201,136 @@ const US_SEED_SOURCES: SeedSource[] = [
     content_type: 'html',
     ingestion_tier: 'exa',
     frequency: 'monthly',
+  },
+
+  // ===== OEHHA / Prop 65 =====
+  {
+    url: 'https://oehha.ca.gov/proposition-65/proposition-65-list',
+    title: 'Prop 65 Chemical List',
+    regulatory_body: 'OEHHA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://oehha.ca.gov/proposition-65/general-info/current-proposition-65-no-significant-risk-levels-nsrls',
+    title: 'Prop 65 NSRLs (No Significant Risk Levels)',
+    regulatory_body: 'OEHHA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://oehha.ca.gov/proposition-65/general-info/current-proposition-65-maximum-allowable-dose-levels-madls',
+    title: 'Prop 65 MADLs (Maximum Allowable Dose Levels)',
+    regulatory_body: 'OEHHA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+
+  // ===== FDA — Allergens & Tainted Supplements =====
+  {
+    url: 'https://www.fda.gov/food/food-allergensgluten-free-guidance-documents-regulatory-information/food-allergies',
+    title: 'FDA Food Allergies Hub',
+    regulatory_body: 'FDA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'weekly',
+  },
+  {
+    url: 'https://www.fda.gov/food/food-allergensgluten-free-guidance-documents-regulatory-information/faster-act-food-allergy-safety-treatment-education-and-research',
+    title: 'FASTER Act (Sesame as Major Allergen)',
+    regulatory_body: 'FDA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.fda.gov/food/dietary-supplements/tainted-products-marketed-dietary-supplements',
+    title: 'FDA Tainted Supplements Database',
+    regulatory_body: 'FDA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'weekly',
+  },
+  {
+    url: 'https://www.fda.gov/cosmetics/cosmetics-ingredient-reviews/color-additives-permitted-use-cosmetics',
+    title: 'Color Additives Permitted in Cosmetics',
+    regulatory_body: 'FDA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+
+  // ===== FTC — Additional Sources =====
+  {
+    url: 'https://www.ftc.gov/legal-library/browse/compliance-guidance/health-products-compliance-guidance',
+    title: 'FTC Health Products Compliance Guidance (2022)',
+    regulatory_body: 'FTC',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.ftc.gov/business-guidance/advertising-marketing',
+    title: 'FTC Advertising & Marketing Hub',
+    regulatory_body: 'FTC',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.ftc.gov/legal-library/browse/federal-register-notices/guides-concerning-use-endorsements-testimonials-advertising',
+    title: 'FTC Endorsement Guides (2023)',
+    regulatory_body: 'FTC',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.ftc.gov/news-events/topics/truth-advertising/health-claims',
+    title: 'FTC Health Claims Enforcement Cases',
+    regulatory_body: 'FTC',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+
+  // ===== USDA FSIS =====
+  {
+    url: 'https://www.fsis.usda.gov/policy/food-safety-acts',
+    title: 'FSIS Food Safety Regulations Hub',
+    regulatory_body: 'USDA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+
+  // ===== FDA — Import Alerts, Warning Letters, Recalls =====
+  {
+    url: 'https://www.accessdata.fda.gov/cms_ia/ialist.html',
+    title: 'FDA Import Alerts Index',
+    regulatory_body: 'FDA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'weekly',
+  },
+  {
+    url: 'https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/compliance-actions-and-activities/warning-letters',
+    title: 'FDA Warning Letters',
+    regulatory_body: 'FDA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'weekly',
+  },
+  {
+    url: 'https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts',
+    title: 'FDA Recalls & Safety Alerts',
+    regulatory_body: 'FDA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'daily',
   },
 
   // ===== FDA — Recent Updates (daily) =====

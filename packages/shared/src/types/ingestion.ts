@@ -1,7 +1,7 @@
-export type RegulatoryBody = 'SFA' | 'HSA' | 'NEA' | 'SSO' | 'FDA' | 'FTC' | 'USDA' | 'CIR' | 'OTHER';
+export type RegulatoryBody = 'SFA' | 'HSA' | 'NEA' | 'SSO' | 'FDA' | 'FTC' | 'USDA' | 'CIR' | 'OEHHA' | 'MHLW' | 'CAA' | 'FFCR' | 'JCIA' | 'NITE' | 'FSCJ' | 'EC' | 'EFSA' | 'ECHA' | 'FSANZ' | 'TGA' | 'AICIS' | 'MEDSAFE' | 'NZ_EPA' | 'SAMR' | 'NHC' | 'CFSA' | 'NMPA' | 'GACC' | 'SAC' | 'GSO' | 'SFDA' | 'MOIAT' | 'DM' | 'ADAFSA' | 'NHRA' | 'PAFN' | 'MOPH' | 'FSQC' | 'FSSAI' | 'CDSCO' | 'BIS' | 'AYUSH' | 'OTHER';
 export type ContentType = 'html' | 'pdf';
-export type IngestionTier = 'exa' | 'browser_use' | 'manual';
-export type ScrapeStatus = 'pending' | 'scraped' | 'structured' | 'error';
+export type IngestionTier = 'exa' | 'browser_use' | 'manual' | 'manual_upload' | 'ecfr_api' | 'usda_fdc_api' | 'openfda' | 'bulk_download' | 'eurlex';
+export type ScrapeStatus = 'pending' | 'pending_upload' | 'scraped' | 'structured' | 'error';
 
 export interface RegulatoryPage {
   url: string;
@@ -42,7 +42,7 @@ export interface StructuredLabellingRequirement {
 
 export interface StructuredClaimsRule {
   claim_text: string;
-  claim_type: 'nutrition' | 'health' | 'therapeutic' | 'marketing';
+  claim_type: 'nutrition' | 'health' | 'therapeutic' | 'marketing' | 'halal';
   status: 'permitted' | 'prohibited' | 'conditional';
   conditions: Record<string, unknown> | null;
   product_categories: string[];

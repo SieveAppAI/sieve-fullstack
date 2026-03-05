@@ -12,6 +12,18 @@
     {
       "path": "/api/cron/reembed",
       "schedule": "0 20 1 * *"
+    },
+    {
+      "path": "/api/cron/openfda-sync",
+      "schedule": "0 21 * * 0"
+    },
+    {
+      "path": "/api/cron/ecfr-sync",
+      "schedule": "0 22 1 * *"
+    },
+    {
+      "path": "/api/cron/usda-fdc-sync",
+      "schedule": "0 23 1 * *"
     }
   ]
 }

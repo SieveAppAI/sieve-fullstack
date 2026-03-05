@@ -7,6 +7,9 @@ import { registerGetImportRequirements } from '@/src/tools/get-import-requiremen
 import { registerGetRegulationUpdate } from '@/src/tools/get-regulation-update';
 import { registerSearchRegulations } from '@/src/tools/search-regulations';
 import { registerTriggerScrape } from '@/src/tools/trigger-scrape';
+import { registerTriggerOpenFda } from '@/src/tools/trigger-openfda';
+import { registerTriggerEcfr } from '@/src/tools/trigger-ecfr';
+import { registerTriggerUsdaFdc } from '@/src/tools/trigger-usda-fdc';
 import { registerGetIngestionStatus } from '@/src/tools/get-ingestion-status';
 
 export const maxDuration = 300;
@@ -24,6 +27,9 @@ function createServer() {
   registerGetRegulationUpdate(server);
   registerSearchRegulations(server);
   registerTriggerScrape(server);
+  registerTriggerOpenFda(server);
+  registerTriggerEcfr(server);
+  registerTriggerUsdaFdc(server);
   registerGetIngestionStatus(server);
 
   return server;
