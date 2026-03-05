@@ -61,17 +61,22 @@ export async function ingestUsdaFdcNutrients(options?: {
   const maxRecords = options?.maxRecords ?? 1000;
 
   if (mode === 'search' && options?.query) {
-    // Search mode: query specific foods
-    const url = new URL(`${BASE_URL}/foods/search`);
-    url.searchParams.set('api_key', apiKey);
-    url.searchParams.set('query', options.query);
-    url.searchParams.set('pageSize', String(Math.min(PAGE_SIZE, maxRecords)));
-    url.searchParams.set('dataType', 'Foundation,SR Legacy');
+    // Search mode: POST with JSON body
+    const url = `${BASE_URL}/foods/search?api_key=${apiKey}`;
 
     try {
-      const res = await fetch(url.toString());
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: options.query,
+          dataType: ['Foundation', 'SR Legacy'],
+          pageSize: Math.min(PAGE_SIZE, maxRecords),
+        }),
+      });
       if (!res.ok) {
-        result.errors.push(`USDA FDC search returned ${res.status}`);
+        const body = await res.text().catch(() => '');
+        result.errors.push(`USDA FDC search returned ${res.status}: ${body.slice(0, 200)}`);
         return result;
       }
 
@@ -90,14 +95,10 @@ export async function ingestUsdaFdcNutrients(options?: {
     let pageNumber = 1;
 
     while (result.total_fetched < maxRecords) {
-      const url = new URL(`${BASE_URL}/foods/list`);
-      url.searchParams.set('api_key', apiKey);
-      url.searchParams.set('pageSize', String(PAGE_SIZE));
-      url.searchParams.set('pageNumber', String(pageNumber));
-      url.searchParams.set('dataType', 'Foundation,SR Legacy');
+      const url = `${BASE_URL}/foods/list?api_key=${apiKey}`;
 
       try {
-        const res = await fetch(url.toString(), {
+        const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

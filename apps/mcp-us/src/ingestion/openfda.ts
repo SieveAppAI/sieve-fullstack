@@ -123,31 +123,45 @@ function cfrPartToProductCategories(cfrCode: string): string[] {
 // ---------------------------------------------------------------------------
 
 function getApiKey(): string | undefined {
-  return process.env.OPENFDA_API_KEY?.trim();
+  return process.env.OPENFDA_API_KEY?.trim().replace(/\\n$/, '');
 }
 
 async function fetchOpenFda<T>(
   endpoint: string,
   params: Record<string, string | number>
 ): Promise<OpenFdaResponse<T>> {
-  const url = new URL(endpoint, BASE_URL);
+  // Build URL manually — OpenFDA's Elasticsearch search syntax
+  // requires unencoded brackets and plus signs
+  const base = new URL(endpoint, BASE_URL);
+  const parts: string[] = [];
   const apiKey = getApiKey();
   if (apiKey) {
-    url.searchParams.set('api_key', apiKey);
+    parts.push(`api_key=${encodeURIComponent(apiKey)}`);
   }
   for (const [key, value] of Object.entries(params)) {
-    url.searchParams.set(key, String(value));
+    if (key === 'search') {
+      // Don't encode search — it contains Elasticsearch query syntax
+      parts.push(`search=${String(value)}`);
+    } else {
+      parts.push(`${key}=${encodeURIComponent(String(value))}`);
+    }
   }
+  const fullUrl = `${base.origin}${base.pathname}${parts.length ? '?' + parts.join('&') : ''}`;
 
   const maxRetries = 3;
   for (let attempt = 0; attempt < maxRetries; attempt++) {
-    const res = await fetch(url.toString());
+    const res = await fetch(fullUrl);
 
     if (res.status === 429) {
       const retryAfter = parseInt(res.headers.get('retry-after') ?? '5', 10);
       console.warn(`OpenFDA rate limited, waiting ${retryAfter}s...`);
       await delay(retryAfter * 1000);
       continue;
+    }
+
+    if (res.status === 404) {
+      // No matches found — return empty result
+      return { meta: { results: { skip: 0, limit: 0, total: 0 } }, results: [] };
     }
 
     if (!res.ok) {

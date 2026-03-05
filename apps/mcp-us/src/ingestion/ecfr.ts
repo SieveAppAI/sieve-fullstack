@@ -4,7 +4,7 @@ import { structureHtmlContent } from './structure';
 import type { RegulatoryPage } from '@sieve/shared';
 import { ECFR_PARTS } from './constants';
 
-const BASE_URL = 'https://www.ecfr.gov/api/versioner/v1/full';
+const BASE_URL = 'https://www.ecfr.gov/api/renderer/v1/content/enhanced/current';
 const JURISDICTION = 'US';
 const DELAY_MS = 250;
 
@@ -16,14 +16,15 @@ export interface EcfrIngestionResult {
   errors: string[];
 }
 
-function stripXmlTags(xml: string): string {
-  return xml
+function stripHtmlTags(html: string): string {
+  return html
     .replace(/<[^>]+>/g, ' ')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&apos;/g, "'")
+    .replace(/&#\d+;/g, '')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -41,18 +42,17 @@ export async function ingestEcfrPart(
   part: number
 ): Promise<{ upserted: boolean; structured: boolean; error?: string }> {
   const supabase = createServiceClient();
-  const date = new Date().toISOString().slice(0, 10);
-  const url = `${BASE_URL}/${date}/title-${title}.xml?part=${part}`;
+  const url = `${BASE_URL}/title-${title}?part=${part}`;
   const canonicalUrl = `https://www.ecfr.gov/current/title-${title}/part-${part}`;
 
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { redirect: 'follow' });
     if (!res.ok) {
       return { upserted: false, structured: false, error: `HTTP ${res.status} for title ${title} part ${part}` };
     }
 
-    const xml = await res.text();
-    const plainText = stripXmlTags(xml);
+    const html = await res.text();
+    const plainText = stripHtmlTags(html);
     const contentHash = sha256(plainText);
 
     // Check if content has changed
@@ -66,7 +66,7 @@ export async function ingestEcfrPart(
       return { upserted: false, structured: false };
     }
 
-    const regulatoryBody = title === 21 ? 'FDA' : title === 7 ? 'USDA' : 'FDA';
+    const regulatoryBody = title === 21 ? 'FDA' : (title === 7 || title === 9) ? 'USDA' : 'FDA';
 
     const { error } = await supabase.from('regulatory_sources').upsert(
       {
