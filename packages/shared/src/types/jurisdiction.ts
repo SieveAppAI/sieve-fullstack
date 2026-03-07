@@ -11,7 +11,8 @@ export type ClaimType =
   | 'health'
   | 'therapeutic'
   | 'marketing'
-  | 'certification';
+  | 'certification'
+  | 'halal';
 
 export type ClaimStatus = 'permitted' | 'prohibited' | 'conditional';
 
