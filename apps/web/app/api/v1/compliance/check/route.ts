@@ -21,6 +21,14 @@ const MCP_US_SERVER_URL =
   process.env.MCP_US_SERVER_URL?.trim() ??
   'https://sieve-mcp-us.vercel.app/api/mcp';
 
+const MCP_JP_SERVER_URL =
+  process.env.MCP_JP_SERVER_URL?.trim() ??
+  'https://sieve-jp.vercel.app/api/mcp';
+
+const MCP_CN_SERVER_URL =
+  process.env.MCP_CN_SERVER_URL?.trim() ??
+  'https://sieve-cn.vercel.app/api/mcp';
+
 // ---------------------------------------------------------------------------
 // MCP transport
 // ---------------------------------------------------------------------------
@@ -65,6 +73,8 @@ function getMcpServerUrl(jurisdiction: string): string {
   const serverMap: Record<string, string> = {
     SG: MCP_SG_SERVER_URL,
     US: MCP_US_SERVER_URL,
+    JP: MCP_JP_SERVER_URL,
+    CN: MCP_CN_SERVER_URL,
   };
 
   const url = serverMap[jurisdiction];
