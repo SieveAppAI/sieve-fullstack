@@ -333,6 +333,56 @@ const US_SEED_SOURCES: SeedSource[] = [
     frequency: 'daily',
   },
 
+  // ===== PDF Sources (manually ingested, re-checked monthly) =====
+  {
+    url: 'https://www.fda.gov/media/88234/download',
+    title: 'FDA Cosmetics Labeling Guide',
+    regulatory_body: 'FDA',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.fda.gov/files/food/published/Food-Labeling-Guide-(PDF).pdf',
+    title: 'FDA Guidance for Industry: Food Labeling Guide',
+    regulatory_body: 'FDA',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.fda.gov/media/97470/download',
+    title: 'FDA Small Entity Compliance Guide: Structure/Function Claims',
+    regulatory_body: 'FDA',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.ftc.gov/system/files/ftc_gov/pdf/Health-Products-Compliance-Guidance.pdf',
+    title: 'FTC Health Products Compliance Guidance (2022)',
+    regulatory_body: 'FTC',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.cir-safety.org/sites/default/files/QuickReferenceTable_AllConclusionTypes.pdf',
+    title: 'CIR Quick Reference Table — All Reviewed Cosmetic Ingredients',
+    regulatory_body: 'CIR',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://oehha.ca.gov/sites/default/files/media/downloads/proposition-65/safeharborlist032521.pdf',
+    title: 'OEHHA Prop 65 Safe Harbor Levels (NSRL/MADL)',
+    regulatory_body: 'OEHHA',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+
   // ===== FDA — Recent Updates (daily) =====
   {
     url: 'https://www.fda.gov/food/cfsan-constituent-updates',
