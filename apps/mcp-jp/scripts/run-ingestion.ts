@@ -44,6 +44,71 @@ async function main() {
       break;
     }
 
+    case 'structure': {
+      // Structure scraped-but-not-yet-structured sources
+      const { createServiceClient } = await import('@sieve/db');
+      const { structureHtmlContent } = await import('../src/ingestion/structure');
+      const { storeStructuredData } = await import('../src/ingestion/store');
+      const { classifyRegulatoryBody } = await import('../src/ingestion/constants');
+
+      const supabase = createServiceClient();
+      const { data: sources } = await supabase
+        .from('regulatory_sources')
+        .select('id, url, title, content_text, content_hash, content_type')
+        .eq('jurisdiction', 'JP')
+        .eq('scrape_status', 'scraped');
+
+      if (!sources || sources.length === 0) {
+        console.log('No scraped sources to structure');
+        break;
+      }
+
+      console.log(`Structuring ${sources.length} pages...`);
+      let structured = 0;
+
+      for (const source of sources) {
+        try {
+          const page = {
+            url: source.url,
+            title: source.title ?? '',
+            content_text: source.content_text ?? '',
+            published_date: null,
+            domain: new URL(source.url).hostname,
+            regulatory_body: classifyRegulatoryBody(source.url),
+            content_type: 'html' as const,
+            scraped_at: new Date().toISOString(),
+            content_hash: source.content_hash ?? '',
+          };
+
+          const data = await structureHtmlContent(page);
+          if (data) {
+            await storeStructuredData(source.url, data);
+            await supabase
+              .from('regulatory_sources')
+              .update({ scrape_status: 'structured', updated_at: new Date().toISOString() })
+              .eq('id', source.id);
+            structured++;
+            console.log(`  Structured: ${source.url}`);
+          } else {
+            console.log(`  No data: ${source.url}`);
+            await supabase
+              .from('regulatory_sources')
+              .update({ scrape_status: 'structured', updated_at: new Date().toISOString() })
+              .eq('id', source.id);
+          }
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          console.error(`  Error: ${source.url}: ${msg}`);
+        }
+
+        // Rate limit for Claude API
+        await new Promise((r) => setTimeout(r, 1500));
+      }
+
+      console.log(`Structured ${structured}/${sources.length} pages`);
+      break;
+    }
+
     case 'change-detection': {
       const { runChangeDetection } = await import('../src/ingestion/change-detection');
       const result = await runChangeDetection();
@@ -53,7 +118,7 @@ async function main() {
 
     default:
       console.error(`Unknown command: ${command}`);
-      console.error('Usage: npx tsx scripts/run-ingestion.ts [seed|scrape|scrape-url <url>|change-detection]');
+      console.error('Usage: npx tsx scripts/run-ingestion.ts [seed|scrape|scrape-url <url>|structure|change-detection]');
       process.exit(1);
   }
 }
