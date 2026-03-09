@@ -1,16 +1,13 @@
 {
-  "name": "mcp-us",
+  "name": "mcp-gcc",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3003",
+    "dev": "next dev --port 3004",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit",
-    "test": "vitest run",
-    "test:e2e": "vitest run tests/e2e",
-    "test:watch": "vitest"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.37",
@@ -21,10 +18,8 @@
     "ai": "^6.0.105",
     "exa-js": "^1.6.0",
     "next": "^15.3.3",
-    "pdf-lib": "^1.17.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "xlsx": "^0.18.5",
     "zod": "^3.25.20"
   },
   "devDependencies": {
@@ -32,7 +27,6 @@
     "@types/node": "^22.15.21",
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.5",
-    "typescript": "^5.8.3",
-    "vitest": "^3.2.1"
+    "typescript": "^5.8.3"
   }
 }

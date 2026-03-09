@@ -1,0 +1,21 @@
+{
+  "framework": "nextjs",
+  "crons": [
+    {
+      "path": "/api/cron/seed",
+      "schedule": "0 17 * * 0"
+    },
+    {
+      "path": "/api/cron/check-changes",
+      "schedule": "0 18 * * *"
+    },
+    {
+      "path": "/api/cron/full-rescrape",
+      "schedule": "0 19 * * 0"
+    },
+    {
+      "path": "/api/cron/reembed",
+      "schedule": "0 20 1 * *"
+    }
+  ]
+}
