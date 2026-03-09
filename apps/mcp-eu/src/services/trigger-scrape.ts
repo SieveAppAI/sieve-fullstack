@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { createServiceClient } from '@sieve/db';
-import type { RegulatoryPage } from '@sieve/shared';
+import type { RegulatoryPage, RegulatoryBody } from '@sieve/shared';
 import { runFullIngestion } from '../ingestion/pipeline';
 import { runChangeDetection } from '../ingestion/change-detection';
 import { runBulkDownload } from '../ingestion/ingest-bulk';
@@ -58,7 +58,7 @@ async function structureRemaining() {
         content_text: source.content_text,
         published_date: null,
         domain: source.domain ?? '',
-        regulatory_body: source.regulatory_body ?? 'EC',
+        regulatory_body: (source.regulatory_body as RegulatoryBody) ?? 'EC',
         content_type: (source.content_type as 'html' | 'pdf') ?? 'html',
         scraped_at: new Date().toISOString(),
         content_hash: '',
