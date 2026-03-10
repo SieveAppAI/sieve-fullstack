@@ -23,7 +23,7 @@ const MCP_US_SERVER_URL =
 
 const MCP_JP_SERVER_URL =
   process.env.MCP_JP_SERVER_URL?.trim() ??
-  'https://sieve-jp.vercel.app/api/mcp';
+  'https://mcp-jp.vercel.app/api/mcp';
 
 const MCP_CN_SERVER_URL =
   process.env.MCP_CN_SERVER_URL?.trim() ??
@@ -43,7 +43,7 @@ const MCP_AU_SERVER_URL =
 
 const MCP_IN_SERVER_URL =
   process.env.MCP_IN_SERVER_URL?.trim() ??
-  'https://sieve-in.vercel.app/api/mcp';
+  'https://sieve-mcp-in.vercel.app/api/mcp';
 
 // ---------------------------------------------------------------------------
 // MCP transport
