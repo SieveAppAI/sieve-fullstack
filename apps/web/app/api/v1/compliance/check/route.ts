@@ -27,7 +27,7 @@ const MCP_JP_SERVER_URL =
 
 const MCP_CN_SERVER_URL =
   process.env.MCP_CN_SERVER_URL?.trim() ??
-  'https://sieve-cn.vercel.app/api/mcp';
+  'https://sieve-mcp-cn.vercel.app/api/mcp';
 
 const MCP_GCC_SERVER_URL =
   process.env.MCP_GCC_SERVER_URL?.trim() ??
@@ -35,11 +35,11 @@ const MCP_GCC_SERVER_URL =
 
 const MCP_EU_SERVER_URL =
   process.env.MCP_EU_SERVER_URL?.trim() ??
-  'https://sieve-eu.vercel.app/api/mcp';
+  'https://sieve-mcp-eu.vercel.app/api/mcp';
 
 const MCP_AU_SERVER_URL =
   process.env.MCP_AU_SERVER_URL?.trim() ??
-  'https://sieve-au.vercel.app/api/mcp';
+  'https://sieve-mcp-au.vercel.app/api/mcp';
 
 const MCP_IN_SERVER_URL =
   process.env.MCP_IN_SERVER_URL?.trim() ??
