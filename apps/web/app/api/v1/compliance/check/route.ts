@@ -29,6 +29,22 @@ const MCP_CN_SERVER_URL =
   process.env.MCP_CN_SERVER_URL?.trim() ??
   'https://sieve-cn.vercel.app/api/mcp';
 
+const MCP_GCC_SERVER_URL =
+  process.env.MCP_GCC_SERVER_URL?.trim() ??
+  'https://sieve-mcp-gcc.vercel.app/api/mcp';
+
+const MCP_EU_SERVER_URL =
+  process.env.MCP_EU_SERVER_URL?.trim() ??
+  'https://sieve-eu.vercel.app/api/mcp';
+
+const MCP_AU_SERVER_URL =
+  process.env.MCP_AU_SERVER_URL?.trim() ??
+  'https://sieve-au.vercel.app/api/mcp';
+
+const MCP_IN_SERVER_URL =
+  process.env.MCP_IN_SERVER_URL?.trim() ??
+  'https://sieve-in.vercel.app/api/mcp';
+
 // ---------------------------------------------------------------------------
 // MCP transport
 // ---------------------------------------------------------------------------
@@ -75,6 +91,10 @@ function getMcpServerUrl(jurisdiction: string): string {
     US: MCP_US_SERVER_URL,
     JP: MCP_JP_SERVER_URL,
     CN: MCP_CN_SERVER_URL,
+    GCC: MCP_GCC_SERVER_URL,
+    EU: MCP_EU_SERVER_URL,
+    AU_NZ: MCP_AU_SERVER_URL,
+    IN: MCP_IN_SERVER_URL,
   };
 
   const url = serverMap[jurisdiction];
