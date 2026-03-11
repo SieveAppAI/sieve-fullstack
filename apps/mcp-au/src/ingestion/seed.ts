@@ -180,6 +180,75 @@ const AU_NZ_SEED_SOURCES: SeedSource[] = [
     jurisdiction_tag: 'NZ',
   },
 
+  // ===== FSANZ — Allergen Labelling =====
+  {
+    url: 'https://www.foodstandards.gov.au/consumer/foodallergies/food-allergen-portal/allergenInfoForindustry',
+    title: 'FSANZ Allergen Labelling Guidelines',
+    regulatory_body: 'FSANZ',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'weekly',
+    jurisdiction_tag: 'AU_NZ',
+  },
+
+  // ===== Health Star Rating =====
+  {
+    url: 'https://www.healthstarrating.gov.au/industry/health-star-rating-system-implementation-guide',
+    title: 'Health Star Rating System Implementation Guide',
+    regulatory_body: 'FSANZ',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+    jurisdiction_tag: 'AU_NZ',
+  },
+
+  // ===== TGA — Additional Supplement Sources (AU only) =====
+  {
+    url: 'https://www.legislation.gov.au/C2004A03952/latest/text',
+    title: 'Therapeutic Goods Act 1989',
+    regulatory_body: 'TGA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+    jurisdiction_tag: 'AU',
+  },
+  {
+    url: 'https://www.tga.gov.au/resources/resource/guidance/tga-approved-terminology-therapeutic-goods',
+    title: 'TGA Approved Terminology for Therapeutic Goods',
+    regulatory_body: 'TGA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+    jurisdiction_tag: 'AU',
+  },
+  {
+    url: 'https://www.tga.gov.au/products/regulations-all-products/ingredients-and-scheduling-medicines-and-chemicals/ingredients-therapeutic-goods/naming-ingredients',
+    title: 'TGA Naming Ingredients in Therapeutic Goods',
+    regulatory_body: 'TGA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+    jurisdiction_tag: 'AU',
+  },
+  {
+    url: 'https://www.tga.gov.au/products/regulations-all-products/ingredients-and-scheduling-medicines-and-chemicals/ingredients-therapeutic-goods/ingredient-basics/herbal-ingredients',
+    title: 'TGA Herbal Ingredients',
+    regulatory_body: 'TGA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+    jurisdiction_tag: 'AU',
+  },
+  {
+    url: 'https://www.tga.gov.au/products/regulations-all-products/ingredients-and-scheduling-medicines-and-chemicals/ingredients-therapeutic-goods/ingredient-basics/colourings-used-medicines-topical-and-oral-use',
+    title: 'TGA Colourings Used in Medicines',
+    regulatory_body: 'TGA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+    jurisdiction_tag: 'AU',
+  },
+
   // ===== FSANZ Website (Browser Use) =====
   {
     url: 'https://www.foodstandards.gov.au/food-standards-code',

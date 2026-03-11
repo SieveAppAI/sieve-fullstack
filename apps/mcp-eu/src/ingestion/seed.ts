@@ -61,10 +61,60 @@ const EU_SEED_SOURCES: SeedSource[] = [
     frequency: 'monthly',
   },
 
+  // ===== EUR-Lex — Additional Legislation =====
+  {
+    url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:02002R0178',
+    title: 'General Food Law Regulation (EC) 178/2002',
+    regulatory_body: 'EC',
+    content_type: 'html',
+    ingestion_tier: 'eurlex',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32012R1047',
+    title: 'Amendment to Health Claims Regulation (EU) 1047/2012',
+    regulatory_body: 'EC',
+    content_type: 'html',
+    ingestion_tier: 'eurlex',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:02006R1925',
+    title: 'Food Fortification Regulation (EC) 1925/2006',
+    regulatory_body: 'EC',
+    content_type: 'html',
+    ingestion_tier: 'eurlex',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:02011R1129',
+    title: 'Union List of Food Additives Regulation (EU) 1129/2011',
+    regulatory_body: 'EC',
+    content_type: 'html',
+    ingestion_tier: 'eurlex',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://eur-lex.europa.eu/EN/legal-content/summary/nutrition-and-health-claims-made-on-foods.html',
+    title: 'Health Claims Summary Page',
+    regulatory_body: 'EC',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'weekly',
+  },
+
   // ===== EC — Food Safety Portal =====
   {
     url: 'https://ec.europa.eu/food/safety/food-improvement-agents/additives_en',
     title: 'EU Food Additives Overview',
+    regulatory_body: 'EC',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'weekly',
+  },
+  {
+    url: 'https://food.ec.europa.eu/food-safety/labelling-and-nutrition_en',
+    title: 'EC Food Safety — Labelling and Nutrition',
     regulatory_body: 'EC',
     content_type: 'html',
     ingestion_tier: 'exa',

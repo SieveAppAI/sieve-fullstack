@@ -193,8 +193,8 @@ const SG_SEED_SOURCES: SeedSource[] = [
     frequency: 'monthly',
   },
   {
-    url: 'https://sso.agc.gov.sg/Acts-Supp/27-2024',
-    title: 'Food Safety and Security Act 2024',
+    url: 'https://sso.agc.gov.sg/Act/FSSA2025',
+    title: 'Food Safety and Security Act 2025',
     regulatory_body: 'SSO',
     content_type: 'html',
     ingestion_tier: 'browser_use',
@@ -220,6 +220,126 @@ const SG_SEED_SOURCES: SeedSource[] = [
     ingestion_tier: 'browser_use',
     browser_use_task:
       'Navigate to the cosmetic product regulations page. Wait for JavaScript to render. Extract the complete regulatory text.',
+    frequency: 'monthly',
+  },
+
+  // ===== HPB — Nutrition & Labelling Programmes =====
+  {
+    url: 'https://www.hpb.gov.sg/food-beverage/healthier-choice-symbol',
+    title: 'Healthier Choice Symbol Programme',
+    regulatory_body: 'HPB',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'weekly',
+  },
+  {
+    url: 'https://www.hpb.gov.sg/docs/default-source/pdf/hcs-guidelines-revision-july-2025.pdf',
+    title: 'HCS Guidelines (July 2025)',
+    regulatory_body: 'HPB',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.hpb.gov.sg/docs/default-source/pdf/a-guide-to-nutrition-labelling-for-food-products-(aug24)-(3).pdf',
+    title: 'HPB Nutrition & Health Claims Guide',
+    regulatory_body: 'HPB',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.hpb.gov.sg/healthy-living/food-beverage/sifecs',
+    title: 'SIFECS Code of Ethics (Infant Formula)',
+    regulatory_body: 'HPB',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+
+  // ===== SFA — Additional PDFs & Pages =====
+  {
+    url: 'https://www.sfa.gov.sg/docs/default-source/food-manufacturing-and-storage/a-guide-to-food-labelling-and-advertisements.pdf',
+    title: 'SFA Labelling Requirements Guide',
+    regulatory_body: 'SFA',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.sfa.gov.sg/docs/default-source/tools-and-resources/list-of-food-additives-permitted-under-food-regulations673e4fa37bb7440d9c23905a343796fe.pdf',
+    title: 'SFA Permitted Food Additives',
+    regulatory_body: 'SFA',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.sfa.gov.sg/docs/default-source/regulatory-standards-frameworks-and-guidelines/sfa-food-ingredients-record-of-views4fb7b957-503a-401d-be2b-cb938c83a0e4.pdf',
+    title: 'SFA Food Ingredients Record of Views',
+    regulatory_body: 'SFA',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.sfa.gov.sg/regulatory-standards-frameworks-guidelines/ingredients-used-in-food/chinese-medicinal-materials-and-ingredients-used-in-food',
+    title: 'Chinese Medicinal Materials Webpage',
+    regulatory_body: 'SFA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'weekly',
+  },
+  {
+    url: 'https://www.sfa.gov.sg/docs/default-source/tools-and-resources/list-of-chinese-medicinal-materials-cmm3042e12552534dfca3da77d54f1b938b.pdf',
+    title: 'Chinese Medicinal Materials List',
+    regulatory_body: 'SFA',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.sfa.gov.sg/food-import-export/commercial-imports/import-requirements-for-food-food-products',
+    title: 'SFA Import Requirements for Food Products',
+    regulatory_body: 'SFA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'weekly',
+  },
+
+  // ===== SFA — Nutri-Grade Image Guidelines =====
+  {
+    url: 'https://www.sfa.gov.sg/nutri-grade/for-industry/nutri-grade-grading-mark',
+    title: 'Nutri-Grade Grading Mark Image Guidelines',
+    regulatory_body: 'SFA',
+    content_type: 'html',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+
+  // ===== HSA — Health Supplement PDFs =====
+  {
+    url: 'https://www.hsa.gov.sg/docs/default-source/hprg-tmhs/hs_guidelines.pdf',
+    title: 'HSA Health Supplements Guidelines',
+    regulatory_body: 'HSA',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.hsa.gov.sg/docs/default-source/hprg-tmhs/chpb-tmhs/tmhs_labelling_guidelines.pdf',
+    title: 'HSA Supplement Labelling Standards',
+    regulatory_body: 'HSA',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
+    frequency: 'monthly',
+  },
+  {
+    url: 'https://www.hsa.gov.sg/docs/default-source/hprg-tmhs/chpb-tmhs/prohibited_restricted_ing_guidelines.pdf',
+    title: 'HSA Prohibited/Restricted Ingredients',
+    regulatory_body: 'HSA',
+    content_type: 'pdf',
+    ingestion_tier: 'exa',
     frequency: 'monthly',
   },
 ];
