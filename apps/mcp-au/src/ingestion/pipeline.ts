@@ -3,6 +3,7 @@ import { extractHtmlContent } from './extract-html';
 import { extractWithBrowserUse } from './browser-use';
 import { structureHtmlContent } from './structure';
 import { storeRegulatoryPage, storeStructuredData } from './store';
+import { seedAUNZSources } from './seed';
 import type { RegulatoryPage } from '@sieve/shared';
 
 export interface IngestionResult {
@@ -18,6 +19,9 @@ export async function runFullIngestion(
   specificUrls?: string[]
 ): Promise<IngestionResult> {
   const errors: { url: string; error: string }[] = [];
+
+  // Step 0: Ensure all seed sources exist in DB
+  await seedAUNZSources();
 
   // Step 1: Discover URLs (or use specific list)
   let urls: string[];
