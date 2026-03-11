@@ -12,7 +12,7 @@ import { registerTriggerEcfr } from '@/src/tools/trigger-ecfr';
 import { registerTriggerUsdaFdc } from '@/src/tools/trigger-usda-fdc';
 import { registerGetIngestionStatus } from '@/src/tools/get-ingestion-status';
 
-export const maxDuration = 300;
+export const maxDuration = 300; // v2: structure_remaining + re_structure modes
 
 function createServer() {
   const server = new McpServer({
