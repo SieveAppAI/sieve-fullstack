@@ -4,3 +4,4 @@ export * from './types/compliance';
 export * from './types/ingestion';
 export * from './constants/jurisdictions';
 export * from './constants/severity';
+export * from './constants/structuring-prompt';
