@@ -1,10 +1,11 @@
 import { z } from 'zod';
 import { runFullIngestion } from '../ingestion/pipeline';
 import { runChangeDetection } from '../ingestion/change-detection';
+import { seedSGSources } from '../ingestion/seed';
 
 export const triggerScrapeSchema = z.object({
   mode: z
-    .enum(['full', 'change_detection', 'specific_urls'])
+    .enum(['full', 'change_detection', 'specific_urls', 'seed'])
     .describe('Scrape mode'),
   urls: z
     .array(z.string())
@@ -27,5 +28,7 @@ export async function triggerScrape(args: TriggerScrapeArgs) {
         return { error: 'urls required for specific_urls mode' };
       }
       return await runFullIngestion(urls);
+    case 'seed':
+      return await seedSGSources();
   }
 }
