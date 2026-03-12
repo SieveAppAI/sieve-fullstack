@@ -4,9 +4,11 @@ import type { RegulatoryPage } from '@sieve/shared';
 import { extractWithCrawl4ai } from '@sieve/shared';
 import { runFullIngestion } from '../ingestion/pipeline';
 import { runChangeDetection } from '../ingestion/change-detection';
-import { classifyRegulatoryBody } from '../ingestion/constants';
+import { classifyRegulatoryBody, BROWSER_USE_DOMAINS } from '../ingestion/constants';
 import { structureHtmlContent } from '../ingestion/structure';
 import { storeRegulatoryPage, storeStructuredData } from '../ingestion/store';
+import { extractPdfWithClaudeVision } from '../ingestion/extract-pdf';
+import { extractWithBrowserUse } from '../ingestion/browser-use';
 
 export const triggerScrapeSchema = z.object({
   mode: z
@@ -160,7 +162,40 @@ async function scrapePending() {
 
   const pages = await extractWithCrawl4ai(urls, classifyRegulatoryBody);
 
+  // Browser Use fallback for URLs that failed direct fetch and are in browser-use domains
+  const scrapedUrls = new Set(pages.map((p) => p.url));
+  const browserUseUrls = urls
+    .filter((u) => !scrapedUrls.has(u))
+    .filter((u) => BROWSER_USE_DOMAINS.some((d) => u.includes(d)));
+
+  if (browserUseUrls.length > 0) {
+    console.log(`Trying Browser Use for ${browserUseUrls.length} URLs...`);
+    const browserPages = await extractWithBrowserUse(browserUseUrls);
+    pages.push(...browserPages);
+  }
+
   for (const page of pages) {
+    // Route PDFs through Claude Vision extraction
+    if (page.content_type === 'pdf') {
+      try {
+        const pdfResult = await extractPdfWithClaudeVision(
+          page.url,
+          page.regulatory_body,
+          'mixed',
+          page.title
+        );
+        await storeRegulatoryPage(page, 'crawl4ai');
+        await storeStructuredData(page.url, pdfResult.structured_data);
+        scraped++;
+        structured++;
+      } catch (e) {
+        errors++;
+        console.error(`PDF extraction failed for ${page.url}: ${e instanceof Error ? e.message : String(e)}`);
+      }
+      await new Promise((r) => setTimeout(r, 1000));
+      continue;
+    }
+
     const stored = await storeRegulatoryPage(page, 'crawl4ai');
     if (stored) {
       scraped++;

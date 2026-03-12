@@ -69,9 +69,11 @@ export async function extractWithCrawl4ai(
     try {
       const response = await fetch(url, {
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; SieveBot/1.0; +https://sieveapp.com)',
-          Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+          Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
           'Accept-Language': 'en-US,en;q=0.9',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'Cache-Control': 'no-cache',
         },
         redirect: 'follow',
         signal: AbortSignal.timeout(15000),
@@ -84,6 +86,30 @@ export async function extractWithCrawl4ai(
       }
 
       const contentType = response.headers.get('content-type') ?? '';
+
+      // Handle PDFs: download buffer and return with content_type 'pdf'
+      if (contentType.includes('pdf')) {
+        const buffer = await response.arrayBuffer();
+        const pdfHash = createHash('sha256').update(Buffer.from(buffer)).digest('hex');
+        const pdfBase64 = Buffer.from(buffer).toString('base64');
+
+        consecutiveErrors = 0;
+        console.log(`scraper: downloaded PDF (${buffer.byteLength} bytes) from ${url}`);
+
+        pages.push({
+          url,
+          title: url.split('/').pop() ?? '',
+          content_text: pdfBase64,
+          published_date: null,
+          domain: new URL(url).hostname,
+          regulatory_body: classifyBody(url),
+          content_type: 'pdf',
+          scraped_at: new Date().toISOString(),
+          content_hash: pdfHash,
+        });
+        continue;
+      }
+
       if (!contentType.includes('html') && !contentType.includes('xml')) {
         console.warn(`scraper: non-HTML content-type (${contentType}) for ${url}, skipping`);
         consecutiveErrors++;

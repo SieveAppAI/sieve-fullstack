@@ -7,9 +7,10 @@ import { runChangeDetection } from '../ingestion/change-detection';
 import { runBulkDownload } from '../ingestion/ingest-bulk';
 import { ingestEurLexLegislation } from '../ingestion/eurlex';
 import { seedEUSources } from '../ingestion/seed';
-import { classifyRegulatoryBody } from '../ingestion/constants';
+import { classifyRegulatoryBody, BROWSER_USE_DOMAINS } from '../ingestion/constants';
 import { structureHtmlContent } from '../ingestion/structure';
 import { storeRegulatoryPage, storeStructuredData } from '../ingestion/store';
+import { extractWithBrowserUse } from '../ingestion/browser-use';
 
 export const triggerScrapeSchema = z.object({
   mode: z
@@ -171,7 +172,25 @@ async function scrapePending() {
 
   const pages = await extractWithCrawl4ai(urls, classifyRegulatoryBody);
 
+  // Browser Use fallback for URLs that failed direct fetch and are in browser-use domains
+  const scrapedUrls = new Set(pages.map((p) => p.url));
+  const browserUseUrls = urls
+    .filter((u) => !scrapedUrls.has(u))
+    .filter((u) => BROWSER_USE_DOMAINS.some((d) => u.includes(d)));
+
+  if (browserUseUrls.length > 0) {
+    console.log(`Trying Browser Use for ${browserUseUrls.length} URLs...`);
+    const browserPages = await extractWithBrowserUse(browserUseUrls);
+    pages.push(...browserPages);
+  }
+
   for (const page of pages) {
+    // Skip PDFs — EU doesn't have PDF extraction yet
+    if (page.content_type === 'pdf') {
+      console.warn(`Skipping PDF (no EU PDF extractor): ${page.url}`);
+      continue;
+    }
+
     const stored = await storeRegulatoryPage(page, 'crawl4ai');
     if (stored) {
       scraped++;
