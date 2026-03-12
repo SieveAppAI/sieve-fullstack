@@ -119,6 +119,11 @@ export const EUR_LEX_CELEX_IDS = [
     title: 'Novel Food Regulation (EU) 2015/2283',
     regulatory_body: 'EC' as const,
   },
+  {
+    celex: '32022R0063',
+    title: 'Titanium Dioxide Ban — Commission Regulation (EU) 2022/63',
+    regulatory_body: 'EC' as const,
+  },
 ] as const;
 
 export function classifyRegulatoryBody(

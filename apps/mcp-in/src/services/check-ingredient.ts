@@ -103,8 +103,8 @@ export async function checkIngredient(args: CheckIngredientArgs) {
     return {
       ingredient,
       jurisdiction: 'IN',
-      status: 'permitted',
-      message: 'No restrictions found for this ingredient in India',
+      status: 'unknown',
+      message: 'No regulatory data available for this ingredient in India. This does not mean the ingredient is permitted — consult the relevant regulatory authority.',
     };
   }
 

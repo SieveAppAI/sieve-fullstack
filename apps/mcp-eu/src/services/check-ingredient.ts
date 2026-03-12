@@ -98,8 +98,8 @@ export async function checkIngredient(args: CheckIngredientArgs) {
     return {
       ingredient,
       jurisdiction: 'EU',
-      status: 'permitted',
-      message: 'No restrictions found for this ingredient in the European Union',
+      status: 'unknown',
+      message: 'No regulatory data available for this ingredient in the European Union. This does not mean the ingredient is permitted — consult the relevant regulatory authority.',
     };
   }
 

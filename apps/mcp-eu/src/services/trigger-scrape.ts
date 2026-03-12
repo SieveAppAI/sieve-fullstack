@@ -6,6 +6,7 @@ import { runFullIngestion } from '../ingestion/pipeline';
 import { runChangeDetection } from '../ingestion/change-detection';
 import { runBulkDownload } from '../ingestion/ingest-bulk';
 import { ingestEurLexLegislation } from '../ingestion/eurlex';
+import { ingestViaCellar } from '../ingestion/cellar';
 import { seedEUSources } from '../ingestion/seed';
 import { classifyRegulatoryBody, BROWSER_USE_DOMAINS } from '../ingestion/constants';
 import { structureHtmlContent } from '../ingestion/structure';
@@ -14,7 +15,7 @@ import { extractWithBrowserUse } from '../ingestion/browser-use';
 
 export const triggerScrapeSchema = z.object({
   mode: z
-    .enum(['full', 'change_detection', 'specific_urls', 'bulk_download', 'eurlex', 'seed', 'structure_remaining', 're_structure', 'scrape_pending'])
+    .enum(['full', 'change_detection', 'specific_urls', 'bulk_download', 'eurlex', 'cellar', 'seed', 'structure_remaining', 're_structure', 'scrape_pending'])
     .describe('Scrape mode'),
   urls: z
     .array(z.string())
@@ -230,6 +231,8 @@ export async function triggerScrape(args: TriggerScrapeArgs) {
       return { results: await runBulkDownload() };
     case 'eurlex':
       return await ingestEurLexLegislation();
+    case 'cellar':
+      return await ingestViaCellar();
     case 'seed':
       return await seedEUSources();
     case 'structure_remaining':

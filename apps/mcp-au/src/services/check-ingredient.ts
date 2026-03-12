@@ -133,8 +133,8 @@ export async function checkIngredient(args: CheckIngredientArgs) {
     return {
       ingredient,
       jurisdiction: 'AU_NZ',
-      status: 'permitted',
-      message: 'No restrictions found for this ingredient in Australia and New Zealand',
+      status: 'unknown',
+      message: 'No regulatory data available for this ingredient in Australia and New Zealand. This does not mean the ingredient is permitted — consult the relevant regulatory authority.',
     };
   }
 

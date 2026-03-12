@@ -4,7 +4,7 @@ import { triggerScrapeSchema, triggerScrape } from '../services/trigger-scrape';
 export function registerTriggerScrape(server: McpServer) {
   server.tool(
     'trigger_scrape',
-    'Trigger a scrape of EU regulatory sources — supports full, change_detection, specific_urls, bulk_download (CosIng/Claims/OpenFoodTox), and eurlex modes (admin only)',
+    'Trigger a scrape of EU regulatory sources — supports full, change_detection, specific_urls, bulk_download (CosIng/Claims/OpenFoodTox), eurlex, and cellar (bypasses WAF via CELLAR API) modes (admin only)',
     triggerScrapeSchema.shape,
     async (args) => {
       const result = await triggerScrape(args);

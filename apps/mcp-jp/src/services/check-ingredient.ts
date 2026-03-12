@@ -103,8 +103,8 @@ export async function checkIngredient(args: CheckIngredientArgs) {
     return {
       ingredient,
       jurisdiction: 'JP',
-      status: 'permitted',
-      message: 'No restrictions found for this ingredient in Japan',
+      status: 'unknown',
+      message: 'No regulatory data available for this ingredient in Japan. This does not mean the ingredient is permitted — consult the relevant regulatory authority.',
     };
   }
 
