@@ -1,15 +1,17 @@
 import { z } from 'zod';
 import { createServiceClient } from '@sieve/db';
 import type { RegulatoryPage } from '@sieve/shared';
+import { extractWithCrawl4ai } from '@sieve/shared';
 import { runFullIngestion } from '../ingestion/pipeline';
 import { runChangeDetection } from '../ingestion/change-detection';
 import { seedAUNZSources } from '../ingestion/seed';
+import { classifyRegulatoryBody } from '../ingestion/constants';
 import { structureHtmlContent } from '../ingestion/structure';
-import { storeStructuredData } from '../ingestion/store';
+import { storeRegulatoryPage, storeStructuredData } from '../ingestion/store';
 
 export const triggerScrapeSchema = z.object({
   mode: z
-    .enum(['full', 'change_detection', 'specific_urls', 'seed', 'structure_remaining', 're_structure'])
+    .enum(['full', 'change_detection', 'specific_urls', 'seed', 'structure_remaining', 're_structure', 're_scrape_short_content'])
     .describe('Scrape mode'),
   urls: z
     .array(z.string())
@@ -137,6 +139,58 @@ async function reStructureAll() {
   return { mode: 're_structure', structured, errors };
 }
 
+async function reScrapeShortContent() {
+  const supabase = createServiceClient();
+  let reSscraped = 0;
+  let structured = 0;
+  let errors = 0;
+
+  const { data: sources } = await supabase
+    .from('regulatory_sources')
+    .select('url, content_text')
+    .eq('jurisdiction', 'AU_NZ')
+    .eq('scrape_status', 'scraped')
+    .order('last_scraped_at', { ascending: true });
+
+  if (!sources || sources.length === 0) {
+    return { mode: 're_scrape_short_content', re_scraped: 0, structured: 0, errors: 0 };
+  }
+
+  const shortContentUrls = sources
+    .filter((s) => !s.content_text || s.content_text.length < 100)
+    .map((s) => s.url);
+
+  if (shortContentUrls.length === 0) {
+    return { mode: 're_scrape_short_content', re_scraped: 0, structured: 0, errors: 0, message: 'No short-content sources found' };
+  }
+
+  console.log(`Found ${shortContentUrls.length} sources with short content, re-scraping with crawl4ai...`);
+
+  const pages = await extractWithCrawl4ai(shortContentUrls, classifyRegulatoryBody);
+
+  for (const page of pages) {
+    const stored = await storeRegulatoryPage(page, 'crawl4ai');
+    if (stored) {
+      reSscraped++;
+
+      try {
+        const result = await structureHtmlContent(page);
+        if (result) {
+          await storeStructuredData(page.url, result);
+          structured++;
+        }
+      } catch (e) {
+        errors++;
+        console.error(`Structure after re-scrape failed for ${page.url}: ${e instanceof Error ? e.message : String(e)}`);
+      }
+
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+  }
+
+  return { mode: 're_scrape_short_content', re_scraped: reSscraped, structured, errors, total_short: shortContentUrls.length };
+}
+
 export async function triggerScrape(args: TriggerScrapeArgs) {
   const { mode, urls } = args;
 
@@ -156,5 +210,7 @@ export async function triggerScrape(args: TriggerScrapeArgs) {
       return await structureRemaining();
     case 're_structure':
       return await reStructureAll();
+    case 're_scrape_short_content':
+      return await reScrapeShortContent();
   }
 }
