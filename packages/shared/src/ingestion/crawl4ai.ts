@@ -1,88 +1,110 @@
 import { createHash } from 'crypto';
+import * as cheerio from 'cheerio';
 import type { RegulatoryPage, RegulatoryBody } from '../types/ingestion';
 
-const CRAWL4AI_API = 'https://api.crawl4ai.com/crawl';
+const NOISE_SELECTORS = [
+  'script', 'style', 'noscript', 'iframe', 'svg',
+  'nav', 'footer', 'header',
+  '.cookie-banner', '.cookie-consent', '.modal',
+  '.sidebar', '.nav', '.menu', '.breadcrumb',
+  '[role="navigation"]', '[role="banner"]', '[role="contentinfo"]',
+  '.social-share', '.share-buttons',
+  '.comments', '#comments',
+  '.advertisement', '.ad-container',
+];
 
-interface Crawl4aiResult {
-  task_id: string;
-  status: string;
-  result?: {
-    markdown?: string;
-    cleaned_html?: string;
-    metadata?: {
-      title?: string;
-    };
-  };
+function htmlToText(html: string): { title: string; content: string } {
+  const $ = cheerio.load(html);
+
+  const title = $('title').first().text().trim() ||
+    $('h1').first().text().trim() ||
+    '';
+
+  // Remove noise elements
+  for (const sel of NOISE_SELECTORS) {
+    $(sel).remove();
+  }
+
+  // Target main content area if it exists
+  const mainContent = $('main, article, [role="main"], .content, #content, .main-content').first();
+  const root = mainContent.length ? mainContent : $('body');
+
+  // Extract text, preserving some structure
+  const blocks: string[] = [];
+
+  root.find('h1, h2, h3, h4, h5, h6, p, li, td, th, dd, dt, blockquote, pre, figcaption').each((_, el) => {
+    const text = $(el).text().replace(/\s+/g, ' ').trim();
+    if (text.length > 0) {
+      const tag = ('tagName' in el ? (el.tagName as string) : '').toLowerCase();
+      if (tag.startsWith('h')) {
+        blocks.push(`\n## ${text}\n`);
+      } else {
+        blocks.push(text);
+      }
+    }
+  });
+
+  // If block extraction got nothing, fall back to full text
+  let content = blocks.join('\n');
+  if (content.length < 50) {
+    content = root.text().replace(/\s+/g, ' ').trim();
+  }
+
+  return { title, content };
 }
 
 export async function extractWithCrawl4ai(
   urls: string[],
   classifyBody: (url: string) => RegulatoryBody
 ): Promise<RegulatoryPage[]> {
-  const apiKey = process.env.CRAWL4AI_API_KEY?.trim();
-  if (!apiKey) {
-    console.warn('CRAWL4AI_API_KEY not set, skipping crawl4ai extraction');
-    return [];
-  }
-
   const pages: RegulatoryPage[] = [];
   let consecutiveErrors = 0;
 
   for (const url of urls) {
     if (consecutiveErrors >= 5) {
-      console.warn(`crawl4ai: ${consecutiveErrors} consecutive errors, skipping remaining ${urls.length - pages.length} URLs`);
+      console.warn(`scraper: ${consecutiveErrors} consecutive errors, skipping remaining ${urls.length - pages.length} URLs`);
       break;
     }
 
     try {
-      // Submit crawl task
-      const submitResponse = await fetch(CRAWL4AI_API, {
-        method: 'POST',
+      const response = await fetch(url, {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
+          'User-Agent': 'Mozilla/5.0 (compatible; SieveBot/1.0; +https://sieveapp.com)',
+          Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.9',
         },
-        body: JSON.stringify({
-          urls: url,
-          priority: 8,
-          screenshot: false,
-          magic: true,
-          cache_mode: 'bypass',
-          remove_overlay_elements: true,
-          word_count_threshold: 10,
-        }),
+        redirect: 'follow',
+        signal: AbortSignal.timeout(15000),
       });
 
-      if (!submitResponse.ok) {
-        const body = await submitResponse.text();
-        console.error(`crawl4ai submit failed for ${url}: ${submitResponse.status} ${body}`);
+      if (!response.ok) {
+        console.error(`scraper: HTTP ${response.status} for ${url}`);
         consecutiveErrors++;
         continue;
       }
 
-      const submitResult: Crawl4aiResult = await submitResponse.json();
-      const taskId = submitResult.task_id;
-
-      if (!taskId) {
-        console.error(`crawl4ai returned no task_id for ${url}`);
+      const contentType = response.headers.get('content-type') ?? '';
+      if (!contentType.includes('html') && !contentType.includes('xml')) {
+        console.warn(`scraper: non-HTML content-type (${contentType}) for ${url}, skipping`);
         consecutiveErrors++;
         continue;
       }
 
-      // Poll for result
-      const content = await pollCrawl4ai(taskId, apiKey);
-      if (!content || content.length < 50) {
-        console.warn(`crawl4ai returned insufficient content for ${url}: ${content?.length ?? 0} chars`);
+      const html = await response.text();
+      const { title, content } = htmlToText(html);
+
+      if (content.length < 50) {
+        console.warn(`scraper: insufficient content for ${url}: ${content.length} chars`);
         consecutiveErrors++;
         continue;
       }
 
       consecutiveErrors = 0;
-      console.log(`crawl4ai extracted ${content.length} chars from ${url}`);
+      console.log(`scraper: extracted ${content.length} chars from ${url}`);
 
       pages.push({
         url,
-        title: '',
+        title,
         content_text: content,
         published_date: null,
         domain: new URL(url).hostname,
@@ -92,51 +114,13 @@ export async function extractWithCrawl4ai(
         content_hash: createHash('sha256').update(content).digest('hex'),
       });
     } catch (err) {
-      console.error(`crawl4ai extraction failed for ${url}:`, err);
+      console.error(`scraper: failed for ${url}:`, err instanceof Error ? err.message : String(err));
       consecutiveErrors++;
     }
 
     // Rate limit
-    await new Promise((r) => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 500));
   }
 
   return pages;
-}
-
-async function pollCrawl4ai(
-  taskId: string,
-  apiKey: string
-): Promise<string | null> {
-  const maxAttempts = 30; // 30 * 5s = 150s max
-
-  for (let i = 0; i < maxAttempts; i++) {
-    await new Promise((r) => setTimeout(r, 5000));
-
-    try {
-      const response = await fetch(`${CRAWL4AI_API}/${taskId}`, {
-        headers: { Authorization: `Bearer ${apiKey}` },
-      });
-
-      if (!response.ok) {
-        console.warn(`crawl4ai poll ${i + 1}: HTTP ${response.status}`);
-        continue;
-      }
-
-      const result: Crawl4aiResult = await response.json();
-
-      if (result.status === 'completed' || result.status === 'finished') {
-        return result.result?.markdown ?? result.result?.cleaned_html ?? null;
-      }
-
-      if (result.status === 'failed' || result.status === 'error') {
-        console.error(`crawl4ai task ${taskId} failed`);
-        return null;
-      }
-    } catch (err) {
-      console.warn(`crawl4ai poll ${i + 1} error:`, err);
-    }
-  }
-
-  console.error(`crawl4ai task ${taskId} timed out after ${maxAttempts * 5}s`);
-  return null;
 }
