@@ -7,11 +7,13 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
-    "clean": "turbo clean"
+    "clean": "turbo clean",
+    "test:e2e": "vitest run --config vitest.config.e2e.ts"
   },
   "devDependencies": {
     "tsx": "^4.21.0",
     "turbo": "^2.5.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.1"
   }
 }
