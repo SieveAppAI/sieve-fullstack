@@ -36,13 +36,28 @@ export async function checkIngredient(args: CheckIngredientArgs) {
   }
 
   if (!ingredientId) {
-    const { data } = await supabase
+    const { data: nameMatches } = await supabase
       .from('ingredients')
       .select('id')
       .or(`canonical_name.ilike.${normalizedName},inci_name.ilike.${normalizedName}`)
-      .limit(1)
-      .single();
-    ingredientId = data?.id ?? null;
+      .limit(5);
+    if (nameMatches && nameMatches.length === 1) {
+      ingredientId = nameMatches[0].id;
+    } else if (nameMatches && nameMatches.length > 1) {
+      for (const match of nameMatches) {
+        const { data: regs } = await supabase
+          .from('ingredient_regulations')
+          .select('id')
+          .eq('ingredient_id', match.id)
+          .eq('jurisdiction', 'US')
+          .limit(1);
+        if (regs && regs.length > 0) {
+          ingredientId = match.id;
+          break;
+        }
+      }
+      if (!ingredientId) ingredientId = nameMatches[0].id;
+    }
   }
 
   // Try synonym/common name match
