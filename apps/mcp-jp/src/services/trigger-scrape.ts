@@ -1,14 +1,16 @@
 import { z } from 'zod';
 import { createServiceClient } from '@sieve/db';
 import type { RegulatoryPage } from '@sieve/shared';
+import { extractWithCrawl4ai } from '@sieve/shared';
 import { runFullIngestion } from '../ingestion/pipeline';
 import { runChangeDetection } from '../ingestion/change-detection';
+import { classifyRegulatoryBody } from '../ingestion/constants';
 import { structureHtmlContent } from '../ingestion/structure';
-import { storeStructuredData } from '../ingestion/store';
+import { storeRegulatoryPage, storeStructuredData } from '../ingestion/store';
 
 export const triggerScrapeSchema = z.object({
   mode: z
-    .enum(['full', 'change_detection', 'specific_urls', 'structure_remaining', 're_structure'])
+    .enum(['full', 'change_detection', 'specific_urls', 'structure_remaining', 're_structure', 'scrape_pending'])
     .describe('Scrape mode'),
   urls: z
     .array(z.string())
@@ -136,6 +138,51 @@ async function reStructureAll() {
   return { mode: 're_structure', structured, errors };
 }
 
+async function scrapePending() {
+  const supabase = createServiceClient();
+  let scraped = 0;
+  let structured = 0;
+  let errors = 0;
+
+  const { data: sources } = await supabase
+    .from('regulatory_sources')
+    .select('url')
+    .eq('jurisdiction', 'JP')
+    .eq('scrape_status', 'pending')
+    .order('created_at', { ascending: true });
+
+  if (!sources || sources.length === 0) {
+    return { mode: 'scrape_pending', scraped: 0, structured: 0, errors: 0, message: 'No pending sources' };
+  }
+
+  const urls = sources.map((s) => s.url);
+  console.log(`Found ${urls.length} pending sources, scraping with direct fetch...`);
+
+  const pages = await extractWithCrawl4ai(urls, classifyRegulatoryBody);
+
+  for (const page of pages) {
+    const stored = await storeRegulatoryPage(page, 'crawl4ai');
+    if (stored) {
+      scraped++;
+
+      try {
+        const result = await structureHtmlContent(page);
+        if (result) {
+          await storeStructuredData(page.url, result);
+          structured++;
+        }
+      } catch (e) {
+        errors++;
+        console.error(`Structure after scrape failed for ${page.url}: ${e instanceof Error ? e.message : String(e)}`);
+      }
+
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+  }
+
+  return { mode: 'scrape_pending', scraped, structured, errors, total_pending: urls.length };
+}
+
 export async function triggerScrape(args: TriggerScrapeArgs) {
   const { mode, urls } = args;
 
@@ -153,5 +200,7 @@ export async function triggerScrape(args: TriggerScrapeArgs) {
       return await structureRemaining();
     case 're_structure':
       return await reStructureAll();
+    case 'scrape_pending':
+      return await scrapePending();
   }
 }

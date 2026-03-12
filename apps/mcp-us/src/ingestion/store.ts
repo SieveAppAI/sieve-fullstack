@@ -1,10 +1,10 @@
 import { createServiceClient } from '@sieve/db';
 import type { Json } from '@sieve/db';
-import type { RegulatoryPage, StructuredData } from '@sieve/shared';
+import type { RegulatoryPage, StructuredData, IngestionTier } from '@sieve/shared';
 
 const JURISDICTION = 'US';
 
-export async function storeRegulatoryPage(page: RegulatoryPage) {
+export async function storeRegulatoryPage(page: RegulatoryPage, tier: IngestionTier = 'exa') {
   const supabase = createServiceClient();
 
   const { error } = await supabase.from('regulatory_sources').upsert(
@@ -15,7 +15,7 @@ export async function storeRegulatoryPage(page: RegulatoryPage) {
       regulatory_body: page.regulatory_body,
       jurisdiction: JURISDICTION,
       content_type: page.content_type,
-      ingestion_tier: 'exa',
+      ingestion_tier: tier,
       content_text: page.content_text,
       content_hash: page.content_hash,
       last_scraped_at: page.scraped_at,

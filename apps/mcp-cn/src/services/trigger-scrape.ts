@@ -10,7 +10,7 @@ import { storeRegulatoryPage, storeStructuredData } from '../ingestion/store';
 
 export const triggerScrapeSchema = z.object({
   mode: z
-    .enum(['full', 'change_detection', 'specific_urls', 'structure_remaining', 're_structure', 're_scrape_short_content'])
+    .enum(['full', 'change_detection', 'specific_urls', 'structure_remaining', 're_structure', 're_scrape_short_content', 'scrape_pending'])
     .describe('Scrape mode'),
   urls: z
     .array(z.string())
@@ -192,6 +192,51 @@ async function reScrapeShortContent() {
   return { mode: 're_scrape_short_content', re_scraped: reSscraped, structured, errors, total_short: shortContentUrls.length };
 }
 
+async function scrapePending() {
+  const supabase = createServiceClient();
+  let scraped = 0;
+  let structured = 0;
+  let errors = 0;
+
+  const { data: sources } = await supabase
+    .from('regulatory_sources')
+    .select('url')
+    .eq('jurisdiction', 'CN')
+    .eq('scrape_status', 'pending')
+    .order('created_at', { ascending: true });
+
+  if (!sources || sources.length === 0) {
+    return { mode: 'scrape_pending', scraped: 0, structured: 0, errors: 0, message: 'No pending sources' };
+  }
+
+  const urls = sources.map((s) => s.url);
+  console.log(`Found ${urls.length} pending sources, scraping with direct fetch...`);
+
+  const pages = await extractWithCrawl4ai(urls, classifyRegulatoryBody);
+
+  for (const page of pages) {
+    const stored = await storeRegulatoryPage(page, 'crawl4ai');
+    if (stored) {
+      scraped++;
+
+      try {
+        const result = await structureHtmlContent(page);
+        if (result) {
+          await storeStructuredData(page.url, result);
+          structured++;
+        }
+      } catch (e) {
+        errors++;
+        console.error(`Structure after scrape failed for ${page.url}: ${e instanceof Error ? e.message : String(e)}`);
+      }
+
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+  }
+
+  return { mode: 'scrape_pending', scraped, structured, errors, total_pending: urls.length };
+}
+
 export async function triggerScrape(args: TriggerScrapeArgs) {
   const { mode, urls } = args;
 
@@ -211,5 +256,7 @@ export async function triggerScrape(args: TriggerScrapeArgs) {
       return await reStructureAll();
     case 're_scrape_short_content':
       return await reScrapeShortContent();
+    case 'scrape_pending':
+      return await scrapePending();
   }
 }
