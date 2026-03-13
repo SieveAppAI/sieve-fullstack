@@ -2,7 +2,7 @@ export function buildOpenApiSpec() {
   return {
     openapi: '3.1.0',
     info: {
-      title: 'Sieve CN — China Regulatory Compliance API',
+      title: 'Taama CN — China Regulatory Compliance API',
       version: '1.0.0',
       description:
         'REST API for querying China regulatory compliance data (SAMR, NHC, CFSA, NMPA, GACC) — ingredients, claims, labelling, import requirements, and regulatory changes for food, health food (supplements), and cosmetics.',

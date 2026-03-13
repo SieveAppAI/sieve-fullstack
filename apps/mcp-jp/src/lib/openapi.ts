@@ -2,7 +2,7 @@ export function buildOpenApiSpec() {
   return {
     openapi: '3.1.0',
     info: {
-      title: 'Sieve JP — Japan Regulatory Compliance API',
+      title: 'Taama JP — Japan Regulatory Compliance API',
       version: '1.0.0',
       description:
         'REST API for querying Japan regulatory compliance data (MHLW, CAA, FFCR) — ingredients, claims, labelling, import requirements, and regulatory changes.',

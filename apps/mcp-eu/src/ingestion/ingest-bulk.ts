@@ -351,7 +351,7 @@ export async function ingestOpenFoodTox(
 
 async function downloadFile(url: string, label: string): Promise<Buffer> {
   const res = await fetch(url, {
-    headers: { 'User-Agent': 'Sieve-EU-MCP/1.0' },
+    headers: { 'User-Agent': 'Taama-EU-MCP/1.0' },
     redirect: 'follow',
   });
   if (!res.ok) throw new Error(`${label} download failed: HTTP ${res.status}`);

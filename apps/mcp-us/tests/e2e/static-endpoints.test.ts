@@ -7,7 +7,7 @@ describe('Static endpoints (no auth)', () => {
     expect(res.status).toBe(200);
     const html = await res.text();
     expect(res.headers.get('content-type')).toContain('text/html');
-    expect(html).toContain('Sieve US');
+    expect(html).toContain('Taama US');
   });
 
   it('GET /api/v1/openapi.json returns valid OpenAPI spec', async () => {

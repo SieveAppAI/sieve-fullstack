@@ -2,7 +2,7 @@ export function buildOpenApiSpec() {
   return {
     openapi: '3.1.0',
     info: {
-      title: 'Sieve SG — Singapore Regulatory Compliance API',
+      title: 'Taama SG — Singapore Regulatory Compliance API',
       version: '1.0.0',
       description:
         'REST API for querying Singapore regulatory compliance data — ingredients, claims, labelling, import requirements, and regulatory changes.',

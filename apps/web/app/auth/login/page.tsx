@@ -17,7 +17,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="w-full max-w-sm rounded-lg bg-white p-8 shadow-md">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Sieve AI</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Taama</h1>
           <p className="mt-2 text-sm text-gray-500">
             AI-powered regulatory compliance
           </p>

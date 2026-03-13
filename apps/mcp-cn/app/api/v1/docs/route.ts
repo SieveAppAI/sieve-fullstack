@@ -4,7 +4,7 @@ export async function GET() {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sieve CN — API Reference</title>
+  <title>Taama CN — API Reference</title>
 </head>
 <body>
   <script id="api-reference" data-url="/api/v1/openapi.json"></script>

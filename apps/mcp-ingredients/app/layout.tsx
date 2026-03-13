@@ -1,4 +1,4 @@
-export const metadata = { title: 'Sieve Ingredients MCP Server' };
+export const metadata = { title: 'Taama Ingredients MCP Server' };
 
 export default function RootLayout({
   children,

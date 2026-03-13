@@ -1,5 +1,5 @@
 /**
- * Seed SG nutrition and marketing claims rules into the Sieve database.
+ * Seed SG nutrition and marketing claims rules into the Taama database.
  * Based on Codex Alimentarius (CAC/GL 23-1997) which SFA follows for nutrition claims,
  * plus SFA-specific marketing claim guidelines.
  *

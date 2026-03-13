@@ -1,3 +1,3 @@
 export default function Home() {
-  return <p>Sieve EU European Union MCP Server</p>;
+  return <p>Taama EU European Union MCP Server</p>;
 }

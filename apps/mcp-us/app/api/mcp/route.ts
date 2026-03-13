@@ -16,7 +16,7 @@ export const maxDuration = 300; // v2: structure_remaining + re_structure modes
 
 function createServer() {
   const server = new McpServer({
-    name: 'sieve-us',
+    name: 'taama-us',
     version: '0.1.0',
   });
 

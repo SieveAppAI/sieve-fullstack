@@ -2,7 +2,7 @@ export function buildOpenApiSpec() {
   return {
     openapi: '3.1.0',
     info: {
-      title: 'Sieve EU — European Union Regulatory Compliance API',
+      title: 'Taama EU — European Union Regulatory Compliance API',
       version: '1.0.0',
       description:
         'REST API for querying EU regulatory compliance data — ingredients (CosIng, Cosmetics Regulation), claims (Health Claims Register, Reg 1924/2006), labelling (FIC 1169/2011), import requirements, and regulatory changes.',

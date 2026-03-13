@@ -248,7 +248,7 @@ async function seedRegulations() {
 }
 
 async function main() {
-  console.log('=== Sieve AI Database Seed ===\n');
+  console.log('=== Taama Database Seed ===\n');
   await seedSources();
   await seedIngredients();
   await seedRegulations();

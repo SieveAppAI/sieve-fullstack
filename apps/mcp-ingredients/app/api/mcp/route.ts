@@ -8,7 +8,7 @@ export const maxDuration = 60;
 
 function createServer() {
   const server = new McpServer({
-    name: 'sieve-ingredients',
+    name: 'taama-ingredients',
     version: '0.1.0',
   });
 

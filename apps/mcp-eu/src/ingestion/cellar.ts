@@ -96,7 +96,7 @@ async function fetchFormexXml(celexNumber: string): Promise<string | null> {
     const res = await fetch(xmlUrl, {
       headers: {
         Accept: 'text/html,application/xhtml+xml',
-        'User-Agent': 'Sieve-Regulatory-Ingestion/1.0 (compliance research)',
+        'User-Agent': 'Taama-Regulatory-Ingestion/1.0 (compliance research)',
       },
       redirect: 'follow',
     });

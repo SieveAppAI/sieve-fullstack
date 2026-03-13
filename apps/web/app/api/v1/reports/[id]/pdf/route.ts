@@ -82,7 +82,7 @@ export async function GET(
       }),
     );
 
-    const filename = `sieve-report-${product.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`;
+    const filename = `taama-report-${product.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`;
 
     return new Response(new Uint8Array(buffer), {
       headers: {

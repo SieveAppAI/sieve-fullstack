@@ -2,7 +2,7 @@ export function buildOpenApiSpec() {
   return {
     openapi: '3.1.0',
     info: {
-      title: 'Sieve US — United States Regulatory Compliance API',
+      title: 'Taama US — United States Regulatory Compliance API',
       version: '1.0.0',
       description:
         'REST API for querying US FDA/FTC regulatory compliance data — ingredients, claims, labelling, import requirements, and regulatory changes.',

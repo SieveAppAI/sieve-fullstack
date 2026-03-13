@@ -2,7 +2,7 @@ export function buildOpenApiSpec() {
   return {
     openapi: '3.1.0',
     info: {
-      title: 'Sieve GCC — Gulf Cooperation Council Regulatory Compliance API',
+      title: 'Taama GCC — Gulf Cooperation Council Regulatory Compliance API',
       version: '1.0.0',
       description:
         'REST API for querying GCC regulatory compliance data — ingredients, claims, labelling, import requirements, and regulatory changes.',

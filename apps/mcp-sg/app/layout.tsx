@@ -1,4 +1,4 @@
-export const metadata = { title: 'Sieve SG MCP Server' };
+export const metadata = { title: 'Taama SG MCP Server' };
 
 export default function RootLayout({
   children,

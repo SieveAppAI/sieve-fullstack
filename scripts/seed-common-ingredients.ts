@@ -1,5 +1,5 @@
 /**
- * Seed common food ingredients into the Sieve database.
+ * Seed common food ingredients into the Taama database.
  * These are generally permitted base ingredients (proteins, fibers, oils, etc.)
  * that aren't in additive schedules but need to be recognized by check_ingredient.
  *

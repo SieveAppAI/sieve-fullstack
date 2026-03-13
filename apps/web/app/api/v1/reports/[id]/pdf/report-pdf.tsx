@@ -177,7 +177,7 @@ export function ReportPdf({
         <Text style={styles.footer}>
           Report generated {new Date(checkedAt).toLocaleString()}
           {dataVersion && ` · Data version: ${dataVersion}`}
-          {'\n'}Powered by Sieve AI
+          {'\n'}Powered by Taama
         </Text>
       </Page>
     </Document>

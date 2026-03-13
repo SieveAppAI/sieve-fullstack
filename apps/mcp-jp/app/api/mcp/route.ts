@@ -13,7 +13,7 @@ export const maxDuration = 300;
 
 function createServer() {
   const server = new McpServer({
-    name: 'sieve-jp',
+    name: 'taama-jp',
     version: '0.1.0',
   });
 

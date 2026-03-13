@@ -1,3 +1,3 @@
 export default function Home() {
-  return <p>Sieve India MCP Server</p>;
+  return <p>Taama India MCP Server</p>;
 }

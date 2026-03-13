@@ -5,7 +5,7 @@ import '@/app/globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Sieve AI — Regulatory Compliance',
+  title: 'Taama — Regulatory Compliance',
   description:
     'AI-powered global regulatory compliance for CPG, supplements, and beauty brands',
 };
